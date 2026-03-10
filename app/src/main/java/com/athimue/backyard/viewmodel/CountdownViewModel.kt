@@ -50,9 +50,10 @@ class CountdownViewModel @Inject constructor(
                 val now = System.currentTimeMillis()
                 val diffSeconds = (scheduledMillis - now) / 1000
 
-                if (diffSeconds <= 0 && _uiState.value.raceState == RaceState.COUNTDOWN) {
-                    // Auto-start: use the scheduled time as the reference so the lap clock
-                    // is perfectly aligned with the official start (not off by polling jitter).
+                // Auto-start only if the scheduled time passed less than 5 minutes ago.
+                // A large negative diffSeconds means the configured time is way in the past
+                // (e.g. after a race reset mid-day), which must not trigger an immediate re-start.
+                if (diffSeconds in -300L..0L && _uiState.value.raceState == RaceState.COUNTDOWN) {
                     raceRepository.setActualStartMillis(scheduledMillis)
                     raceRepository.setRaceState(RaceState.IN_PROGRESS)
                 }
