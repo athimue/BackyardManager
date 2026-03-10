@@ -3,9 +3,9 @@ package com.athimue.backyard.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.model.LapResult
-import com.athimue.backyard.model.LapStatus
 import com.athimue.backyard.model.LapStatus.*
 import com.athimue.backyard.model.ResultsUiState
+import com.athimue.backyard.model.Runner
 import com.athimue.backyard.repository.ResultsRepository
 import com.athimue.backyard.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,12 +34,23 @@ class ResultsViewModel @Inject constructor(
         viewModelScope.launch {
             combine(
                 repository.observeRunners(),
-                repository.observeLapResults()
-            ) { runners, lapResults ->
+                repository.observeLapResults(),
+                timerRepository.observeSeconds()
+            ) { runners, lapResults, seconds ->
                 val resultsByRunner: Map<Int, Map<Int, LapResult>> =
                     lapResults.groupBy { it.runnerId }
                         .mapValues { (_, list) -> list.associateBy { it.lapNumber } }
-                ResultsUiState(runners = runners, results = resultsByRunner)
+                val currentLap = seconds / LAP_DURATION_SECONDS + 1
+                val sortedRunners = runners.sortedWith(
+                    compareByDescending<Runner> { runner ->
+                        lapResults.count { it.runnerId == runner.dossardId && it.status == COMPLETED }
+                    }.thenBy { it.firstName }
+                )
+                ResultsUiState(
+                    runners = sortedRunners,
+                    results = resultsByRunner,
+                    currentLap = currentLap
+                )
             }.stateIn(
                 scope = this,
                 started = SharingStarted.WhileSubscribed(5000),
@@ -77,15 +88,8 @@ class ResultsViewModel @Inject constructor(
             val currentLap = totalSeconds / LAP_DURATION_SECONDS + 1
 
             when (_uiState.value.statusFor(runnerId, lapNumber)) {
-                null -> {
-                    val lapTime = formatLapTime(totalSeconds % LAP_DURATION_SECONDS)
-                    repository.setLapResult(runnerId, lapNumber, lapTime, COMPLETED)
-                }
+                null, ELIMINATED -> return@launch
                 COMPLETED -> {
-                    val existing = _uiState.value.timeFor(runnerId, lapNumber) ?: ""
-                    repository.setLapResult(runnerId, lapNumber, existing, ELIMINATED)
-                }
-                ELIMINATED -> {
                     if (lapNumber == currentLap) {
                         repository.removeLapResult(runnerId, lapNumber)
                     }
