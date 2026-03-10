@@ -121,7 +121,7 @@ class TimerViewModel @Inject constructor(
                 it.runnerId == runner.id && it.status == LapStatus.ELIMINATED && it.lapNumber < completedLap
             }
             if (!alreadyHasResult && !alreadyEliminated) {
-                resultsRepository.setLapResult(runner.id, completedLap, "DNF", LapStatus.ELIMINATED)
+                resultsRepository.setLapResult(runner.id, completedLap, "1:00:00", LapStatus.ELIMINATED)
             }
         }
     }
