@@ -1,0 +1,86 @@
+<resources>
+    <!-- Base theme for Android TV (Material dark, no Leanback) -->
+    <style name="Theme.Backyard" parent="android:Theme.Material.NoActionBar">
+        <!-- Window background -->
+        <item name="android:windowBackground">@color/default_background</item>
+        <item name="android:colorBackground">@color/default_background</item>
+        
+        <!-- Status bar and navigation bar -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Window features for TV -->
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        
+        <!-- Text appearance styles optimized for TV viewing distance -->
+        <item name="android:textAppearance">@style/TextAppearance.Backyard.Body</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        
+        <!-- Focus highlight colors -->
+        <item name="android:colorAccent">@color/selected_background</item>
+    </style>
+
+    <!-- Base text appearance style (required by Material theme) -->
+    <style name="TextAppearance" parent="android:TextAppearance">
+    </style>
+
+    <!-- Base text appearance style for Backyard -->
+    <style name="TextAppearance.Backyard" parent="TextAppearance">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Text appearance styles optimized for TV -->
+    <style name="TextAppearance.Backyard.Headline" parent="TextAppearance.Backyard">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Backyard.Title" parent="TextAppearance.Backyard">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Backyard.Subtitle" parent="TextAppearance.Backyard">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TextAppearance.Backyard.Body" parent="TextAppearance.Backyard">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TextAppearance.Backyard.Caption" parent="TextAppearance.Backyard">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Base widget style (required by Material theme) -->
+    <style name="Widget" parent="android:Widget">
+    </style>
+
+    <!-- Base widget style for Backyard -->
+    <style name="Widget.Backyard" parent="Widget">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <!-- Button styles for TV -->
+    <style name="Widget.Backyard.Button" parent="Widget.Backyard">
+        <item name="android:textAppearance">@style/TextAppearance.Backyard.Body</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/default_background</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <!-- Focus highlight style -->
+    <style name="Widget.Backyard.FocusHighlight" parent="Widget.Backyard">
+        <item name="android:background">@color/selected_background</item>
+        <item name="android:padding">4dp</item>
+    </style>
+</resources>
