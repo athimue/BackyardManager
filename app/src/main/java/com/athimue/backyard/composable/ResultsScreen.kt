@@ -126,18 +126,25 @@ fun ResultsScreen(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     uiState.laps.forEach { lap ->
+                        val isCurrentLap = lap == uiState.currentLap
                         Box(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(32.dp),
+                                .height(32.dp)
+                                .then(
+                                    if (isCurrentLap) Modifier.background(
+                                        AppColors.OrangeSubtle,
+                                        RoundedCornerShape(4.dp)
+                                    ) else Modifier
+                                ),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
                                 text = lap.toString(),
-                                color = AppColors.Orange,
+                                color = if (isCurrentLap) AppColors.Orange else AppColors.Gray,
                                 fontSize = AppTypography.bodySmallSize,
                                 fontFamily = AppTypography.fontFamily,
-                                fontWeight = AppTypography.semiBold
+                                fontWeight = if (isCurrentLap) AppTypography.bold else AppTypography.semiBold
                             )
                         }
                     }
@@ -175,7 +182,7 @@ fun ResultsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Button(
-                            onClick = { viewModel.onRunnerNameClicked(runner.id) },
+                            onClick = { viewModel.onRunnerNameClicked(runner.dossardId) },
                             colors = ButtonDefaults.colors(
                                 containerColor = AppColors.SurfaceMid,
                                 focusedContainerColor = AppColors.OrangeDim,
@@ -193,12 +200,22 @@ fun ResultsScreen(
                             )
                         }
                         Text(
-                            modifier = Modifier.padding(top = 6.dp),
-                            text = "${uiState.completedLapsFor(runner.id)} laps",
+                            modifier = Modifier.padding(top = 4.dp),
+                            text = "${uiState.completedLapsFor(runner.dossardId)} laps",
                             color = AppColors.Gray,
                             fontSize = AppTypography.labelSize,
                             fontFamily = AppTypography.fontFamily
                         )
+                        uiState.bestLapTimeFor(runner.dossardId)?.let { best ->
+                            Text(
+                                modifier = Modifier.padding(top = 2.dp),
+                                text = "Best: $best",
+                                color = AppColors.GreenFilledBorder,
+                                fontSize = AppTypography.labelSize,
+                                fontFamily = AppTypography.fontFamily,
+                                fontWeight = AppTypography.semiBold
+                            )
+                        }
                     }
 
                     // Lap cells
@@ -207,8 +224,8 @@ fun ResultsScreen(
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         uiState.laps.forEachIndexed { lapIndex, lap ->
-                            val lapResult = uiState.lapResultFor(runner.id, lap)
-                            val isCross = uiState.isCrossCell(runner.id, lap)
+                            val lapResult = uiState.lapResultFor(runner.dossardId, lap)
+                            val isCross = uiState.isCrossCell(runner.dossardId, lap)
                             var isFocused by remember { mutableStateOf(false) }
 
                             val cellBackground = when {
@@ -244,7 +261,7 @@ fun ResultsScreen(
                                             (it.key == Enter || it.key == DirectionCenter)
                                         ) {
                                             viewModel.onLapClicked(
-                                                runnerId = runner.id,
+                                                runnerId = runner.dossardId,
                                                 lapNumber = lap
                                             )
                                             true
@@ -294,7 +311,7 @@ fun ResultsScreen(
 
                 RunnerLifeLine(
                     runner = runner,
-                    completedLaps = uiState.completedLapsFor(runner.id),
+                    completedLaps = uiState.completedLapsFor(runner.dossardId),
                     totalLaps = uiState.laps.size
                 )
             }
@@ -463,7 +480,8 @@ private fun RunnerLifeLine(
 
             // Runner photo positioned at their last completed lap
             val photoOffsetX = if (completedLaps > 0) {
-                maxOf(0.dp, cellWidth * (completedLaps - 0.5f) - photoRadius)
+                val raw = cellWidth * (completedLaps - 0.5f) - photoRadius
+                raw.coerceIn(0.dp, totalWidth - photoSize)
             } else {
                 0.dp
             }

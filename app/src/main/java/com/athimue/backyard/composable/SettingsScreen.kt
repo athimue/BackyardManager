@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,174 +47,185 @@ fun SettingsScreen(
         }
     }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(AppColors.Black)
-            .padding(32.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
-    ) {
-        // ── Header ──────────────────────────────────────────────────────────
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "⚙  Settings",
-                    fontSize = AppTypography.titleSize,
-                    fontFamily = AppTypography.fontFamily,
-                    fontWeight = AppTypography.bold,
-                    color = AppColors.Orange
-                )
-                Button(
-                    onClick = onBack,
-                    colors = ButtonDefaults.colors(
-                        containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.Orange
-                    )
-                ) {
-                    Text("← Back", fontFamily = AppTypography.fontFamily)
-                }
-            }
-
-            Spacer(Modifier.height(4.dp))
-            Box(Modifier.fillMaxWidth().height(2.dp).background(AppColors.Orange))
-        }
-
-        // ── Start time ──────────────────────────────────────────────────────
-        item {
-            SectionTitle("Race Start Time")
-            Spacer(Modifier.height(12.dp))
-
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                // Hours
-                Text("Hours:", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
-                StepButton("-") { viewModel.decrementStartHour() }
-                Box(
-                    modifier = Modifier
-                        .size(64.dp)
-                        .background(AppColors.SurfaceDark, RoundedCornerShape(8.dp))
-                        .border(1.dp, AppColors.Orange, RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(AppColors.Black)
+                .padding(32.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            // ── Header ──────────────────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "%02d".format(uiState.startHour),
-                        color = AppColors.White,
-                        fontSize = AppTypography.bodyLargeSize,
+                        text = "⚙  Settings",
+                        fontSize = AppTypography.titleSize,
+                        fontFamily = AppTypography.fontFamily,
+                        fontWeight = AppTypography.bold,
+                        color = AppColors.Orange
+                    )
+                    Button(
+                        onClick = onBack,
+                        colors = ButtonDefaults.colors(
+                            containerColor = AppColors.SurfaceMid,
+                            focusedContainerColor = AppColors.Orange
+                        )
+                    ) {
+                        Text("← Back", fontFamily = AppTypography.fontFamily)
+                    }
+                }
+
+                Spacer(Modifier.height(4.dp))
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .height(2.dp)
+                        .background(AppColors.Orange)
+                )
+            }
+
+            // ── Start time ──────────────────────────────────────────────────────
+            item {
+                SectionTitle("Race Start Time")
+                Spacer(Modifier.height(12.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    // Hours
+                    Text("Hours:", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
+                    StepButton("-") { viewModel.decrementStartHour() }
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .background(AppColors.SurfaceDark, RoundedCornerShape(8.dp))
+                            .border(1.dp, AppColors.Orange, RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "%02d".format(uiState.startHour),
+                            color = AppColors.White,
+                            fontSize = AppTypography.bodyLargeSize,
+                            fontFamily = AppTypography.fontFamily,
+                            fontWeight = AppTypography.bold
+                        )
+                    }
+                    StepButton("+") { viewModel.incrementStartHour() }
+
+                    Spacer(Modifier.width(16.dp))
+
+                    // Minutes
+                    Text("Minutes:", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
+                    StepButton("-") { viewModel.decrementStartMinute() }
+                    Box(
+                        modifier = Modifier
+                            .size(64.dp)
+                            .background(AppColors.SurfaceDark, RoundedCornerShape(8.dp))
+                            .border(1.dp, AppColors.Orange, RoundedCornerShape(8.dp)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "%02d".format(uiState.startMinute),
+                            color = AppColors.White,
+                            fontSize = AppTypography.bodyLargeSize,
+                            fontFamily = AppTypography.fontFamily,
+                            fontWeight = AppTypography.bold
+                        )
+                    }
+                    StepButton("+") { viewModel.incrementStartMinute() }
+
+                    Spacer(Modifier.width(24.dp))
+                    Text(
+                        text = "→  ${uiState.startTimeFormatted}",
+                        color = AppColors.Orange,
+                        fontSize = AppTypography.bodyMediumSize,
                         fontFamily = AppTypography.fontFamily,
                         fontWeight = AppTypography.bold
                     )
                 }
-                StepButton("+") { viewModel.incrementStartHour() }
+            }
 
-                Spacer(Modifier.width(16.dp))
+            // ── Runners ─────────────────────────────────────────────────────────
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    SectionTitle("Runners (${uiState.runners.size})")
+                    Button(
+                        onClick = { viewModel.restoreDefaultRunners() },
+                        colors = ButtonDefaults.colors(
+                            containerColor = AppColors.SurfaceMid,
+                            focusedContainerColor = AppColors.OrangeDim
+                        )
+                    ) {
+                        Text(
+                            "↺  Restore defaults",
+                            fontFamily = AppTypography.fontFamily,
+                            fontSize = AppTypography.labelSize
+                        )
+                    }
+                }
+            }
 
-                // Minutes
-                Text("Minutes:", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
-                StepButton("-") { viewModel.decrementStartMinute() }
-                Box(
+            items(uiState.runners) { runner ->
+                Row(
                     modifier = Modifier
-                        .size(64.dp)
-                        .background(AppColors.SurfaceDark, RoundedCornerShape(8.dp))
-                        .border(1.dp, AppColors.Orange, RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth()
+                        .background(AppColors.SurfaceCell, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "%02d".format(uiState.startMinute),
+                        text = runner.firstName,
                         color = AppColors.White,
-                        fontSize = AppTypography.bodyLargeSize,
-                        fontFamily = AppTypography.fontFamily,
-                        fontWeight = AppTypography.bold
+                        fontSize = AppTypography.bodySmallSize,
+                        fontFamily = AppTypography.fontFamily
                     )
-                }
-                StepButton("+") { viewModel.incrementStartMinute() }
-
-                Spacer(Modifier.width(24.dp))
-                Text(
-                    text = "→  ${uiState.startTimeFormatted}",
-                    color = AppColors.Orange,
-                    fontSize = AppTypography.bodyMediumSize,
-                    fontFamily = AppTypography.fontFamily,
-                    fontWeight = AppTypography.bold
-                )
-            }
-        }
-
-        // ── Runners ─────────────────────────────────────────────────────────
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                SectionTitle("Runners (${uiState.runners.size})")
-                Button(
-                    onClick = { viewModel.restoreDefaultRunners() },
-                    colors = ButtonDefaults.colors(
-                        containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.OrangeDim
-                    )
-                ) {
-                    Text(
-                        "↺  Restore defaults",
-                        fontFamily = AppTypography.fontFamily,
-                        fontSize = AppTypography.labelSize
-                    )
+                    Button(
+                        onClick = { viewModel.removeRunner(runner.dossardId) },
+                        colors = ButtonDefaults.colors(
+                            containerColor = AppColors.RedFilled,
+                            focusedContainerColor = AppColors.RedFilledBorder
+                        )
+                    ) {
+                        Text(
+                            "✕ Remove",
+                            fontFamily = AppTypography.fontFamily,
+                            fontSize = AppTypography.labelSize
+                        )
+                    }
                 }
             }
-        }
 
-        items(uiState.runners) { runner ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(AppColors.SurfaceCell, RoundedCornerShape(6.dp))
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = runner.firstName,
-                    color = AppColors.White,
-                    fontSize = AppTypography.bodySmallSize,
-                    fontFamily = AppTypography.fontFamily
-                )
+            // ── Danger zone ──────────────────────────────────────────────────────
+            item {
+                SectionTitle("Danger Zone")
+                Spacer(Modifier.height(12.dp))
                 Button(
-                    onClick = { viewModel.removeRunner(runner.id) },
+                    onClick = { viewModel.resetRace() },
                     colors = ButtonDefaults.colors(
                         containerColor = AppColors.RedFilled,
-                        focusedContainerColor = AppColors.RedFilledBorder
+                        focusedContainerColor = AppColors.RedFilledBorder,
+                        contentColor = AppColors.White,
+                        focusedContentColor = AppColors.White
                     )
                 ) {
-                    Text("✕ Remove", fontFamily = AppTypography.fontFamily, fontSize = AppTypography.labelSize)
+                    Text(
+                        text = "🔄  Reset race (clears all results)",
+                        fontSize = AppTypography.bodyMediumSize,
+                        fontFamily = AppTypography.fontFamily,
+                        fontWeight = AppTypography.bold
+                    )
                 }
-            }
-        }
-
-        // ── Danger zone ──────────────────────────────────────────────────────
-        item {
-            SectionTitle("Danger Zone")
-            Spacer(Modifier.height(12.dp))
-            Button(
-                onClick = { viewModel.resetRace() },
-                colors = ButtonDefaults.colors(
-                    containerColor = AppColors.RedFilled,
-                    focusedContainerColor = AppColors.RedFilledBorder,
-                    contentColor = AppColors.White,
-                    focusedContentColor = AppColors.White
-                )
-            ) {
-                Text(
-                    text = "🔄  Reset race (clears all results)",
-                    fontSize = AppTypography.bodyMediumSize,
-                    fontFamily = AppTypography.fontFamily,
-                    fontWeight = AppTypography.bold
-                )
             }
         }
     }

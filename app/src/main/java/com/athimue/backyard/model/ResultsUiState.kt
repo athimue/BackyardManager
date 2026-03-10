@@ -7,15 +7,21 @@ private const val MAX_LAPS = 15
 @Immutable
 data class ResultsUiState(
     val runners: List<Runner> = emptyList(),
-    val results: Map<Int, Map<Int, LapResult>> = emptyMap()
+    val results: Map<Int, Map<Int, LapResult>> = emptyMap(),
+    val currentLap: Int = 1
 ) {
-    val laps: List<Int> = (1..MAX_LAPS).toList()
+    val laps: List<Int>
+        get() {
+            val highestResultLap = results.values.flatMap { it.keys }.maxOrNull() ?: 0
+            val maxLap = maxOf(currentLap + 1, highestResultLap + 1, 5).coerceAtMost(MAX_LAPS)
+            return (1..maxLap).toList()
+        }
 
     val activeRunnersCount: Int
-        get() = runners.count { eliminationLapFor(it.id) == null }
+        get() = runners.count { eliminationLapFor(it.dossardId) == null }
 
     val eliminatedRunnersCount: Int
-        get() = runners.count { eliminationLapFor(it.id) != null }
+        get() = runners.count { eliminationLapFor(it.dossardId) != null }
 
     fun lapResultFor(runnerId: Int, lapNumber: Int): LapResult? =
         results[runnerId]?.get(lapNumber)
