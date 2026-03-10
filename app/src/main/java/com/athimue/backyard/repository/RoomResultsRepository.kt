@@ -32,7 +32,6 @@ private val DEFAULT_RUNNERS = listOf(
     RunnerEntity(11, "Tristan"),
     RunnerEntity(12, "Remi"),
     RunnerEntity(13, "Luca"),
-    RunnerEntity(14, "Pote de Marc"),
 )
 
 @Singleton
@@ -70,7 +69,7 @@ class RoomResultsRepository @Inject constructor(
 
     override suspend fun addRunner(firstName: String) = withContext(Dispatchers.IO) {
         val nextId = (runnerDao.count()) + 100
-        runnerDao.insert(RunnerEntity(id = nextId, firstName = firstName))
+        runnerDao.insert(RunnerEntity(dossardId = nextId, firstName = firstName))
     }
 
     override suspend fun removeRunner(runnerId: Int) =
@@ -86,7 +85,7 @@ class RoomResultsRepository @Inject constructor(
     }
 
     private fun RunnerEntity.toDomain() = Runner(
-        id = id, firstName = firstName, photoResId = R.drawable.logo
+        dossardId = dossardId, firstName = firstName, photoResId = R.drawable.logo
     )
 
     private fun LapResultEntity.toDomain() = LapResult(

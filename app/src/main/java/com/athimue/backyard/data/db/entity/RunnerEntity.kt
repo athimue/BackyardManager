@@ -5,6 +5,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "runners")
 data class RunnerEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val dossardId: Int,
     val firstName: String
 )

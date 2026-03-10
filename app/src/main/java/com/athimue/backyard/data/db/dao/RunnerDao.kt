@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RunnerDao {
-    @Query("SELECT * FROM runners ORDER BY id ASC")
+    @Query("SELECT * FROM runners ORDER BY dossardId ASC")
     fun observeAll(): Flow<List<RunnerEntity>>
 
     @Query("SELECT COUNT(*) FROM runners")
@@ -25,7 +25,7 @@ interface RunnerDao {
     @Delete
     suspend fun delete(runner: RunnerEntity)
 
-    @Query("DELETE FROM runners WHERE id = :id")
+    @Query("DELETE FROM runners WHERE dossardId = :id")
     suspend fun deleteById(id: Int)
 
     @Query("DELETE FROM runners")

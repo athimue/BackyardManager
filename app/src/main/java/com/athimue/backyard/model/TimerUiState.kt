@@ -29,6 +29,12 @@ data class TimerUiState(
 
     val showEndLapCountdown: Boolean
         get() = remainingSecondsInLap <= 30
+
+    val elapsedRaceFormatted: String
+        get() = formatTime(seconds)
+
+    val isLapEndUrgent: Boolean
+        get() = remainingSecondsInLap <= 30
 }
 
 private fun formatTime(totalSeconds: Int): String {

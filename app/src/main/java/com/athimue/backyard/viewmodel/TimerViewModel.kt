@@ -48,7 +48,7 @@ class TimerViewModel @Inject constructor(
             resultsRepository.observeLapResults()
         ) { runners, lapResults ->
             runners.count { runner ->
-                lapResults.none { it.runnerId == runner.id && it.status == LapStatus.ELIMINATED }
+                lapResults.none { it.runnerId == runner.dossardId && it.status == LapStatus.ELIMINATED }
             }
         }.collect { active ->
             _uiState.update { it.copy(activeRunnersCount = active) }
@@ -115,13 +115,13 @@ class TimerViewModel @Inject constructor(
 
         runners.forEach { runner ->
             val alreadyHasResult = results.any {
-                it.runnerId == runner.id && it.lapNumber == completedLap
+                it.runnerId == runner.dossardId && it.lapNumber == completedLap
             }
             val alreadyEliminated = results.any {
-                it.runnerId == runner.id && it.status == LapStatus.ELIMINATED && it.lapNumber < completedLap
+                it.runnerId == runner.dossardId && it.status == LapStatus.ELIMINATED && it.lapNumber < completedLap
             }
             if (!alreadyHasResult && !alreadyEliminated) {
-                resultsRepository.setLapResult(runner.id, completedLap, "DNF", LapStatus.ELIMINATED)
+                resultsRepository.setLapResult(runner.dossardId, completedLap, "DNF", LapStatus.ELIMINATED)
             }
         }
     }

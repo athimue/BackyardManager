@@ -146,6 +146,11 @@ fun TimerScreen(
                 label = "Next start",
                 value = uiState.remainingTimeFormatted
             )
+            LabelValueCell(
+                modifier = Modifier.weight(1f),
+                label = "Elapsed",
+                value = uiState.elapsedRaceFormatted
+            )
         }
 
         // ── Progress bar ─────────────────────────────────────────────────────
@@ -157,6 +162,7 @@ fun TimerScreen(
         ) {
             ProgressBar(
                 progress = uiState.lapProgress,
+                urgent = uiState.isLapEndUrgent,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(28.dp)
@@ -255,8 +261,14 @@ private fun LabelValueCell(
 @Composable
 private fun ProgressBar(
     progress: Float,
+    urgent: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val fillColor by animateColorAsState(
+        targetValue = if (urgent) androidx.compose.ui.graphics.Color(0xFFE53935) else AppColors.Orange,
+        animationSpec = tween(600),
+        label = "progress_color"
+    )
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(4.dp))
@@ -267,7 +279,7 @@ private fun ProgressBar(
                 .fillMaxWidth(progress.coerceIn(0f, 1f))
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(4.dp))
-                .background(AppColors.Orange)
+                .background(fillColor)
         )
     }
 }

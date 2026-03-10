@@ -5,7 +5,7 @@ import androidx.annotation.DrawableRes
 
 @Immutable
 data class Runner(
-    val id: Int,
+    val dossardId: Int,
     val firstName: String,
     @DrawableRes val photoResId: Int
 )
