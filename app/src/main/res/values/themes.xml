@@ -73,7 +73,6 @@
     <style name="Widget.Backyard.Button" parent="Widget.Backyard">
         <item name="android:textAppearance">@style/TextAppearance.Backyard.Body</item>
         <item name="android:textColor">@android:color/white</item>
-        <item name="android:background">@drawable/default_background</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
     </style>
