@@ -6,6 +6,12 @@ Android TV app for managing and tracking a **Backyard Ultra** race in real time.
 
 A Backyard Ultra is a timed ultramarathon format where runners complete a 6.7 km loop every hour. The last runner still going wins. Any runner who fails to complete a loop within the hour is eliminated.
 
+## Screenshots
+
+| Countdown | Timer | Results |
+|-----------|-------|---------|
+| ![Countdown](screenshots/countdown.png) | ![Timer](screenshots/timer.png) | ![Results](screenshots/result.png) |
+
 ## Features
 
 - **Countdown screen** — displays the time remaining before the race starts with auto-start at the scheduled time
