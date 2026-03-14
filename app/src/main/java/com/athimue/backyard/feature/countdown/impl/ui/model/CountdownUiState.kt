@@ -1,7 +1,7 @@
-package com.athimue.backyard.feature.countdown.ui.model
+package com.athimue.backyard.feature.countdown.impl.ui.model
 
 import androidx.compose.runtime.Immutable
-import com.athimue.backyard.model.RaceState
+import com.athimue.backyard.feature.countdown.api.model.RaceState
 
 @Immutable
 data class CountdownUiState(

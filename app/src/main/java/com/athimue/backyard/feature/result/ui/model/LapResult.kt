@@ -1,4 +1,4 @@
-package com.athimue.backyard.model
+package com.athimue.backyard.feature.result.ui.model
 
 import androidx.compose.runtime.Immutable
 

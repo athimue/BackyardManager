@@ -1,11 +1,16 @@
-package com.athimue.backyard.feature.countdown.ui.viewmodel
+package com.athimue.backyard.feature.countdown.impl.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.feature.countdown.ui.model.CountdownUiState
-import com.athimue.backyard.model.RaceState
+import com.athimue.backyard.feature.countdown.impl.domain.usecase.GetRaceStartMillis
+import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveRaceState
+import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveStartHour
+import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveStartMinute
+import com.athimue.backyard.feature.countdown.impl.domain.usecase.SetActualStartMillis
+import com.athimue.backyard.feature.countdown.impl.domain.usecase.SetRaceState
+import com.athimue.backyard.feature.countdown.impl.ui.model.CountdownUiState
 import com.athimue.backyard.feature.timer.ui.model.formatCurrentTime
-import com.athimue.backyard.repository.RaceRepository
+import com.athimue.backyard.feature.countdown.api.model.RaceState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +24,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CountdownViewModel @Inject constructor(
-    private val raceRepository: RaceRepository
+    private val observeRaceState: ObserveRaceState,
+    private val observeStartHour: ObserveStartHour,
+    private val observeStartMinute: ObserveStartMinute,
+    private val getRaceStartMillis: GetRaceStartMillis,
+    private val setRaceState: SetRaceState,
+    private val setActualStartMillis: SetActualStartMillis,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CountdownUiState())
@@ -33,9 +43,9 @@ class CountdownViewModel @Inject constructor(
     private fun observeRaceConfig() {
         viewModelScope.launch {
             combine(
-                raceRepository.observeRaceState(),
-                raceRepository.observeStartHour(),
-                raceRepository.observeStartMinute()
+                observeRaceState.invoke(),
+                observeStartHour.invoke(),
+                observeStartMinute.invoke()
             ) { state, hour, minute -> Triple(state, hour, minute) }
                 .collect { (state, hour, minute) ->
                     _uiState.update { it.copy(raceState = state, startHour = hour, startMinute = minute) }
@@ -46,7 +56,7 @@ class CountdownViewModel @Inject constructor(
     private fun startCountdownTicker() {
         viewModelScope.launch {
             while (isActive) {
-                val scheduledMillis = raceRepository.getRaceStartMillis()
+                val scheduledMillis = getRaceStartMillis.invoke()
                 val now = System.currentTimeMillis()
                 val diffSeconds = (scheduledMillis - now) / 1000
 
@@ -54,8 +64,8 @@ class CountdownViewModel @Inject constructor(
                 // A large negative diffSeconds means the configured time is way in the past
                 // (e.g. after a race reset mid-day), which must not trigger an immediate re-start.
                 if (diffSeconds in -300L..0L && _uiState.value.raceState == RaceState.COUNTDOWN) {
-                    raceRepository.setActualStartMillis(scheduledMillis)
-                    raceRepository.setRaceState(RaceState.IN_PROGRESS)
+                    setActualStartMillis.invoke(scheduledMillis)
+                    setRaceState.invoke(RaceState.IN_PROGRESS)
                 }
 
                 _uiState.update {
@@ -72,8 +82,8 @@ class CountdownViewModel @Inject constructor(
     fun startRaceNow() {
         viewModelScope.launch {
             // Manual start: record the exact moment the button was pressed.
-            raceRepository.setActualStartMillis(System.currentTimeMillis())
-            raceRepository.setRaceState(RaceState.IN_PROGRESS)
+            setActualStartMillis.invoke(System.currentTimeMillis())
+            setRaceState.invoke(RaceState.IN_PROGRESS)
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.athimue.backyard.repository
 
-import com.athimue.backyard.model.RaceState
+import com.athimue.backyard.feature.countdown.api.model.RaceState
 import kotlinx.coroutines.flow.Flow
 
 interface RaceRepository {

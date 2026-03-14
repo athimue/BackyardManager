@@ -1,7 +1,7 @@
-package com.athimue.backyard.model
+package com.athimue.backyard.feature.result.ui.model
 
-import androidx.compose.runtime.Immutable
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
 
 @Immutable
 data class Runner(
@@ -9,4 +9,3 @@ data class Runner(
     val firstName: String,
     @DrawableRes val photoResId: Int
 )
-

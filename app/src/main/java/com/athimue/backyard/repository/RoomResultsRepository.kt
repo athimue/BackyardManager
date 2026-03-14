@@ -5,9 +5,9 @@ import com.athimue.backyard.data.db.dao.LapResultDao
 import com.athimue.backyard.data.db.dao.RunnerDao
 import com.athimue.backyard.data.db.entity.LapResultEntity
 import com.athimue.backyard.data.db.entity.RunnerEntity
-import com.athimue.backyard.model.LapResult
-import com.athimue.backyard.model.LapStatus
-import com.athimue.backyard.model.Runner
+import com.athimue.backyard.feature.result.ui.model.LapResult
+import com.athimue.backyard.feature.result.ui.model.LapStatus
+import com.athimue.backyard.feature.result.ui.model.Runner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
