@@ -3,7 +3,6 @@ package com.athimue.backyard.feature.race.impl.ui.model
 import androidx.compose.runtime.Immutable
 import com.athimue.backyard.feature.race.impl.domain.model.LapResult
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
-import com.athimue.backyard.feature.race.impl.domain.model.Runner
 
 @Immutable
 data class LapResultUiModel(
@@ -13,7 +12,7 @@ data class LapResultUiModel(
     val status: LapStatus = LapStatus.COMPLETED
 )
 
-fun LapResult.LapResultUiModel() = LapResultUiModel(
+fun LapResult.toLapResultUiModel() = LapResultUiModel(
     runnerId = runnerId,
     lapNumber = lapNumber,
     time = time,
