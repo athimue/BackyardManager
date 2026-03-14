@@ -3,12 +3,12 @@ package com.athimue.backyard.feature.timer.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.audio.SoundManager
-import com.athimue.backyard.feature.race.impl.ui.model.LapStatus
+import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 import com.athimue.backyard.feature.timer.ui.model.TimerUiState
 import com.athimue.backyard.feature.timer.ui.model.formatCurrentTime
-import com.athimue.backyard.repository.RaceRepository
-import com.athimue.backyard.repository.ResultsRepository
-import com.athimue.backyard.repository.TimerRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,7 +1,7 @@
 package com.athimue.backyard.feature.countdown.impl.domain.usecase
 
 import com.athimue.backyard.feature.countdown.api.model.RaceState
-import com.athimue.backyard.repository.RaceRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

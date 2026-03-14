@@ -1,13 +1,14 @@
 package com.athimue.backyard.feature.race.impl.ui.model
 
 import androidx.compose.runtime.Immutable
+import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 
 private const val MAX_LAPS = 15
 
 @Immutable
 data class ResultsUiState(
-    val runners: List<Runner> = emptyList(),
-    val results: Map<Int, Map<Int, LapResult>> = emptyMap(),
+    val runners: List<RunnerUiModel> = emptyList(),
+    val results: Map<Int, Map<Int, LapResultUiModel>> = emptyMap(),
     val currentLap: Int = 1
 ) {
     val laps: List<Int>
@@ -23,7 +24,7 @@ data class ResultsUiState(
     val eliminatedRunnersCount: Int
         get() = runners.count { eliminationLapFor(it.dossardId) != null }
 
-    fun lapResultFor(runnerId: Int, lapNumber: Int): LapResult? =
+    fun lapResultFor(runnerId: Int, lapNumber: Int): LapResultUiModel? =
         results[runnerId]?.get(lapNumber)
 
     fun statusFor(runnerId: Int, lapNumber: Int): LapStatus? =

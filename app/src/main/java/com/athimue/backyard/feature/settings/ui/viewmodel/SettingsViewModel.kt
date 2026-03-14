@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.feature.countdown.api.model.RaceState
 import com.athimue.backyard.feature.settings.ui.model.SettingsUiState
-import com.athimue.backyard.repository.RaceRepository
-import com.athimue.backyard.repository.ResultsRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -2,11 +2,12 @@ package com.athimue.backyard.feature.race.impl.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.feature.race.impl.ui.model.LapResult
-import com.athimue.backyard.feature.race.impl.ui.model.LapStatus.*
+import com.athimue.backyard.feature.race.impl.domain.model.LapResult
+import com.athimue.backyard.feature.race.impl.domain.model.LapStatus.*
 import com.athimue.backyard.feature.race.impl.ui.model.ResultsUiState
-import com.athimue.backyard.repository.ResultsRepository
-import com.athimue.backyard.repository.TimerRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
+import com.athimue.backyard.feature.race.impl.ui.model.toRunnerUiModel
+import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,10 +38,10 @@ class ResultsViewModel @Inject constructor(
                 timerRepository.observeSeconds()
             ) { runners, lapResults, seconds ->
                 val resultsByRunner: Map<Int, Map<Int, LapResult>> =
-                    lapResults.groupBy { it.runnerId }
+                    lapResults.map { it.toLapResultUiModel() }.groupBy { it.runnerId }
                         .mapValues { (_, list) -> list.associateBy { it.lapNumber } }
                 val currentLap = seconds / LAP_DURATION_SECONDS + 1
-                val sortedRunners = runners.sortedWith(
+                val sortedRunners = runners.map { it.toRunnerUiModel() }.sortedWith(
                     Comparator { a, b ->
                         val timeA = lapResults.find {
                             it.runnerId == a.dossardId && it.lapNumber == currentLap && it.status == COMPLETED

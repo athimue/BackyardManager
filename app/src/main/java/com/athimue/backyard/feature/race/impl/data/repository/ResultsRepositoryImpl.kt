@@ -1,13 +1,15 @@
-package com.athimue.backyard.repository
+package com.athimue.backyard.feature.race.impl.data.repository
 
 import com.athimue.backyard.R
 import com.athimue.backyard.data.db.dao.LapResultDao
 import com.athimue.backyard.data.db.dao.RunnerDao
 import com.athimue.backyard.data.db.entity.LapResultEntity
 import com.athimue.backyard.data.db.entity.RunnerEntity
-import com.athimue.backyard.feature.race.impl.ui.model.LapResult
-import com.athimue.backyard.feature.race.impl.ui.model.LapStatus
-import com.athimue.backyard.feature.race.impl.ui.model.Runner
+import com.athimue.backyard.feature.race.impl.data.constant.DEFAULT_RUNNERS
+import com.athimue.backyard.feature.race.impl.domain.model.LapResult
+import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
+import com.athimue.backyard.feature.race.impl.domain.model.Runner
+import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,24 +20,8 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val DEFAULT_RUNNERS = listOf(
-    RunnerEntity(1, "Brice"),
-    RunnerEntity(2, "Thibaud"),
-    RunnerEntity(3, "Killian"),
-    RunnerEntity(4, "Corentin"),
-    RunnerEntity(5, "Aubin"),
-    RunnerEntity(6, "Theo"),
-    RunnerEntity(7, "Louis"),
-    RunnerEntity(8, "Marc"),
-    RunnerEntity(9, "Hugo"),
-    RunnerEntity(10, "Mathieu"),
-    RunnerEntity(11, "Tristan"),
-    RunnerEntity(12, "Remi"),
-    RunnerEntity(13, "Luca"),
-)
-
 @Singleton
-class RoomResultsRepository @Inject constructor(
+class ResultsRepositoryImpl @Inject constructor(
     private val runnerDao: RunnerDao,
     private val lapResultDao: LapResultDao
 ) : ResultsRepository {

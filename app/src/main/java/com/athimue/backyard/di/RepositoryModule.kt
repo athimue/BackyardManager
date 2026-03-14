@@ -1,11 +1,11 @@
 package com.athimue.backyard.di
 
-import com.athimue.backyard.repository.InMemoryTimerRepository
-import com.athimue.backyard.repository.RaceRepository
-import com.athimue.backyard.repository.ResultsRepository
-import com.athimue.backyard.repository.RoomRaceRepository
-import com.athimue.backyard.repository.RoomResultsRepository
-import com.athimue.backyard.repository.TimerRepository
+import com.athimue.backyard.feature.race.impl.data.repository.TimerRepositoryImpl
+import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
+import com.athimue.backyard.feature.race.impl.data.repository.RaceRepositoryImpl
+import com.athimue.backyard.feature.race.impl.data.repository.ResultsRepositoryImpl
+import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,13 +18,13 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun bindResultsRepository(impl: RoomResultsRepository): ResultsRepository
+    abstract fun bindResultsRepository(impl: ResultsRepositoryImpl): ResultsRepository
 
     @Binds
     @Singleton
-    abstract fun bindTimerRepository(impl: InMemoryTimerRepository): TimerRepository
+    abstract fun bindTimerRepository(impl: TimerRepositoryImpl): TimerRepository
 
     @Binds
     @Singleton
-    abstract fun bindRaceRepository(impl: RoomRaceRepository): RaceRepository
+    abstract fun bindRaceRepository(impl: RaceRepositoryImpl): RaceRepository
 }

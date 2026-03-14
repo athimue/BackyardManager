@@ -1,8 +1,9 @@
-package com.athimue.backyard.repository
+package com.athimue.backyard.feature.race.impl.data.repository
 
 import com.athimue.backyard.data.db.dao.RaceDao
 import com.athimue.backyard.data.db.entity.RaceEntity
 import com.athimue.backyard.feature.countdown.api.model.RaceState
+import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -15,7 +16,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class RoomRaceRepository @Inject constructor(
+class RaceRepositoryImpl @Inject constructor(
     private val raceDao: RaceDao
 ) : RaceRepository {
 

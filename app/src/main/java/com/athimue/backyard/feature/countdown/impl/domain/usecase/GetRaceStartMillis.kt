@@ -1,6 +1,6 @@
 package com.athimue.backyard.feature.countdown.impl.domain.usecase
 
-import com.athimue.backyard.repository.RaceRepository
+import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import javax.inject.Inject
 
 class GetRaceStartMillis @Inject constructor(

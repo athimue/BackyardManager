@@ -1,4 +1,4 @@
-package com.athimue.backyard.repository
+package com.athimue.backyard.feature.race.impl.domain.repository
 
 import com.athimue.backyard.feature.countdown.api.model.RaceState
 import kotlinx.coroutines.flow.Flow
