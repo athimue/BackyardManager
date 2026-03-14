@@ -11,10 +11,8 @@ import com.athimue.backyard.feature.race.impl.ui.model.ResultsUiState
 import com.athimue.backyard.feature.race.impl.ui.model.toLapResultUiModel
 import com.athimue.backyard.feature.race.impl.ui.model.toRunnerUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
@@ -29,48 +27,43 @@ class ResultsViewModel @Inject constructor(
     private val timerRepository: TimerRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ResultsUiState())
-    val uiState: StateFlow<ResultsUiState> = _uiState.asStateFlow()
+    private val _uiState = combine(
+        repository.observeRunners(),
+        repository.observeLapResults(),
+        timerRepository.observeSeconds()
+    ) { runners, lapResults, seconds ->
+        val resultsByRunner: Map<Int, Map<Int, LapResultUiModel>> =
+            lapResults.map { it.toLapResultUiModel() }.groupBy { it.runnerId }
+                .mapValues { (_, list) -> list.associateBy { it.lapNumber } }
+        val currentLap = seconds / LAP_DURATION_SECONDS + 1
+        val sortedRunners = runners.map { it.toRunnerUiModel() }.sortedWith(
+            Comparator { a, b ->
+                val timeA = lapResults.find {
+                    it.runnerId == a.dossardId && it.lapNumber == currentLap && it.status == COMPLETED
+                }?.time
+                val timeB = lapResults.find {
+                    it.runnerId == b.dossardId && it.lapNumber == currentLap && it.status == COMPLETED
+                }?.time
+                when {
+                    timeA != null && timeB != null -> timeA.compareTo(timeB)
+                    timeA != null -> -1
+                    timeB != null -> 1
+                    else -> a.firstName.compareTo(b.firstName)
+                }
+            }
+        )
+        ResultsUiState(
+            runners = sortedRunners,
+            results = resultsByRunner,
+            currentLap = currentLap
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = ResultsUiState()
+    )
 
-    init {
-        viewModelScope.launch {
-            combine(
-                repository.observeRunners(),
-                repository.observeLapResults(),
-                timerRepository.observeSeconds()
-            ) { runners, lapResults, seconds ->
-                val resultsByRunner: Map<Int, Map<Int, LapResultUiModel>> =
-                    lapResults.map { it.toLapResultUiModel() }.groupBy { it.runnerId }
-                        .mapValues { (_, list) -> list.associateBy { it.lapNumber } }
-                val currentLap = seconds / LAP_DURATION_SECONDS + 1
-                val sortedRunners = runners.map { it.toRunnerUiModel() }.sortedWith(
-                    Comparator { a, b ->
-                        val timeA = lapResults.find {
-                            it.runnerId == a.dossardId && it.lapNumber == currentLap && it.status == COMPLETED
-                        }?.time
-                        val timeB = lapResults.find {
-                            it.runnerId == b.dossardId && it.lapNumber == currentLap && it.status == COMPLETED
-                        }?.time
-                        when {
-                            timeA != null && timeB != null -> timeA.compareTo(timeB)
-                            timeA != null -> -1
-                            timeB != null -> 1
-                            else -> a.firstName.compareTo(b.firstName)
-                        }
-                    }
-                )
-                ResultsUiState(
-                    runners = sortedRunners,
-                    results = resultsByRunner,
-                    currentLap = currentLap
-                )
-            }.stateIn(
-                scope = this,
-                started = SharingStarted.WhileSubscribed(5000),
-                initialValue = ResultsUiState()
-            ).collect { _uiState.value = it }
-        }
-    }
+    val uiState: StateFlow<ResultsUiState> = _uiState
 
     /**
      * Records a COMPLETED lap for the runner at the current lap number.
