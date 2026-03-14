@@ -38,7 +38,7 @@ import com.athimue.backyard.theme.AppColors
 import com.athimue.backyard.theme.AppTypography
 
 @Composable
-fun CountdownScreen(
+internal fun CountdownScreen(
     viewModel: CountdownViewModel = hiltViewModel(),
     onRaceStarted: () -> Unit,
     onOpenSettings: () -> Unit
