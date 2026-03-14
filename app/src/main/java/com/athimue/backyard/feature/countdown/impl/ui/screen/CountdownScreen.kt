@@ -32,10 +32,10 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.R
-import com.athimue.backyard.feature.countdown.api.model.RaceState
+import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel.IN_PROGRESS
+import com.athimue.backyard.feature.countdown.impl.ui.viewmodel.CountdownViewModel
 import com.athimue.backyard.theme.AppColors
 import com.athimue.backyard.theme.AppTypography
-import com.athimue.backyard.feature.countdown.impl.ui.viewmodel.CountdownViewModel
 
 @Composable
 fun CountdownScreen(
@@ -47,7 +47,7 @@ fun CountdownScreen(
 
     // Auto-navigate when race starts
     LaunchedEffect(uiState.raceState) {
-        if (uiState.raceState == RaceState.IN_PROGRESS) onRaceStarted()
+        if (uiState.raceState == IN_PROGRESS) onRaceStarted()
     }
 
     val pulse by rememberInfiniteTransition(label = "pulse").animateFloat(

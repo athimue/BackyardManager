@@ -1,11 +1,10 @@
 package com.athimue.backyard.feature.countdown.impl.ui.model
 
 import androidx.compose.runtime.Immutable
-import com.athimue.backyard.feature.countdown.api.model.RaceState
 
 @Immutable
 data class CountdownUiState(
-    val raceState: RaceState = RaceState.COUNTDOWN,
+    val raceState: RaceStateUiModel = RaceStateUiModel.COUNTDOWN,
     val startHour: Int = 9,
     val startMinute: Int = 0,
     val currentTime: String = "",
