@@ -1,4 +1,4 @@
-package com.athimue.backyard.composable
+package com.athimue.backyard.feature.result.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -56,10 +56,11 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.R
-import com.athimue.backyard.model.LapStatus
-import com.athimue.backyard.ui.theme.AppColors
-import com.athimue.backyard.ui.theme.AppTypography
-import com.athimue.backyard.viewmodel.ResultsViewModel
+import com.athimue.backyard.feature.result.ui.model.LapStatus
+import com.athimue.backyard.feature.result.ui.model.Runner
+import com.athimue.backyard.theme.AppColors
+import com.athimue.backyard.theme.AppTypography
+import com.athimue.backyard.feature.result.ui.viewmodel.ResultsViewModel
 
 private val RUNNER_CELL_WIDTH = 140.dp
 private val LAP_CELL_HEIGHT = 48.dp
@@ -435,7 +436,7 @@ private fun ResultsHeader(
 
 @Composable
 private fun RunnerLifeLine(
-    runner: com.athimue.backyard.model.Runner,
+    runner: Runner,
     completedLaps: Int,
     totalLaps: Int,
     modifier: Modifier = Modifier

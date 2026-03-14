@@ -1,6 +1,7 @@
-package com.athimue.backyard.model
+package com.athimue.backyard.feature.result.ui.model
 
 import androidx.compose.runtime.Immutable
+import com.athimue.backyard.feature.result.ui.model.Runner
 
 private const val MAX_LAPS = 15
 
@@ -25,9 +26,6 @@ data class ResultsUiState(
 
     fun lapResultFor(runnerId: Int, lapNumber: Int): LapResult? =
         results[runnerId]?.get(lapNumber)
-
-    fun timeFor(runnerId: Int, lapNumber: Int): String? =
-        lapResultFor(runnerId, lapNumber)?.time
 
     fun statusFor(runnerId: Int, lapNumber: Int): LapStatus? =
         lapResultFor(runnerId, lapNumber)?.status

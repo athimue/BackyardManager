@@ -1,4 +1,4 @@
-package com.athimue.backyard.composable
+package com.athimue.backyard.feature.countdown.ui.screen
 
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -8,7 +8,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,9 +33,9 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.R
 import com.athimue.backyard.model.RaceState
-import com.athimue.backyard.ui.theme.AppColors
-import com.athimue.backyard.ui.theme.AppTypography
-import com.athimue.backyard.viewmodel.CountdownViewModel
+import com.athimue.backyard.theme.AppColors
+import com.athimue.backyard.theme.AppTypography
+import com.athimue.backyard.feature.countdown.ui.viewmodel.CountdownViewModel
 
 @Composable
 fun CountdownScreen(

@@ -1,11 +1,11 @@
-package com.athimue.backyard.viewmodel
+package com.athimue.backyard.feature.timer.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.audio.SoundManager
-import com.athimue.backyard.model.LapStatus
-import com.athimue.backyard.model.TimerUiState
-import com.athimue.backyard.model.formatCurrentTime
+import com.athimue.backyard.feature.result.ui.model.LapStatus
+import com.athimue.backyard.feature.timer.ui.model.TimerUiState
+import com.athimue.backyard.feature.timer.ui.model.formatCurrentTime
 import com.athimue.backyard.repository.RaceRepository
 import com.athimue.backyard.repository.ResultsRepository
 import com.athimue.backyard.repository.TimerRepository

@@ -1,10 +1,10 @@
-package com.athimue.backyard.viewmodel
+package com.athimue.backyard.feature.countdown.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.model.CountdownUiState
+import com.athimue.backyard.feature.countdown.ui.model.CountdownUiState
 import com.athimue.backyard.model.RaceState
-import com.athimue.backyard.model.formatCurrentTime
+import com.athimue.backyard.feature.timer.ui.model.formatCurrentTime
 import com.athimue.backyard.repository.RaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay

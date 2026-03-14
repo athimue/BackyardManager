@@ -1,4 +1,4 @@
-package com.athimue.backyard.composable
+package com.athimue.backyard.feature.timer.ui.screen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -26,15 +26,17 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.R
-import com.athimue.backyard.ui.theme.AppColors
-import com.athimue.backyard.ui.theme.AppTypography
-import com.athimue.backyard.viewmodel.TimerViewModel
+import com.athimue.backyard.theme.AppColors
+import com.athimue.backyard.theme.AppTypography
+import com.athimue.backyard.feature.timer.ui.viewmodel.TimerViewModel
 
 @Composable
 fun TimerScreen(
@@ -260,12 +262,12 @@ private fun LabelValueCell(
 
 @Composable
 private fun ProgressBar(
+    modifier: Modifier = Modifier,
     progress: Float,
     urgent: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     val fillColor by animateColorAsState(
-        targetValue = if (urgent) androidx.compose.ui.graphics.Color(0xFFE53935) else AppColors.Orange,
+        targetValue = if (urgent) Color(0xFFE53935) else AppColors.Orange,
         animationSpec = tween(600),
         label = "progress_color"
     )
@@ -284,4 +286,4 @@ private fun ProgressBar(
     }
 }
 
-private val Int.sp get() = androidx.compose.ui.unit.TextUnit(this.toFloat(), androidx.compose.ui.unit.TextUnitType.Sp)
+private val Int.sp get() = TextUnit(this.toFloat(), TextUnitType.Sp)

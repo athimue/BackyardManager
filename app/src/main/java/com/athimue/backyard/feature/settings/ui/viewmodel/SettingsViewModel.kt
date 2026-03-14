@@ -1,9 +1,9 @@
-package com.athimue.backyard.viewmodel
+package com.athimue.backyard.feature.settings.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.model.RaceState
-import com.athimue.backyard.model.SettingsUiState
+import com.athimue.backyard.feature.settings.ui.model.SettingsUiState
 import com.athimue.backyard.repository.RaceRepository
 import com.athimue.backyard.repository.ResultsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

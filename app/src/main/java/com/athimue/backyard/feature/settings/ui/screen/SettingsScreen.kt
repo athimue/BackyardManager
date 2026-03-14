@@ -1,4 +1,4 @@
-package com.athimue.backyard.composable
+package com.athimue.backyard.feature.settings.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,14 +22,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
-import com.athimue.backyard.ui.theme.AppColors
-import com.athimue.backyard.ui.theme.AppTypography
-import com.athimue.backyard.viewmodel.SettingsViewModel
+import com.athimue.backyard.theme.AppColors
+import com.athimue.backyard.theme.AppTypography
+import com.athimue.backyard.feature.settings.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
@@ -262,4 +264,4 @@ private fun StepButton(label: String, onClick: () -> Unit) {
     }
 }
 
-private val Int.sp get() = androidx.compose.ui.unit.TextUnit(this.toFloat(), androidx.compose.ui.unit.TextUnitType.Sp)
+private val Int.sp get() = TextUnit(this.toFloat(), TextUnitType.Sp)
