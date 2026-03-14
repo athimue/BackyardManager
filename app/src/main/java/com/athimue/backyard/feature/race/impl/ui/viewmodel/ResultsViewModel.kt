@@ -1,10 +1,10 @@
-package com.athimue.backyard.feature.race.ui.viewmodel
+package com.athimue.backyard.feature.race.impl.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.feature.race.ui.model.LapResult
-import com.athimue.backyard.feature.race.ui.model.LapStatus.*
-import com.athimue.backyard.feature.race.ui.model.ResultsUiState
+import com.athimue.backyard.feature.race.impl.ui.model.LapResult
+import com.athimue.backyard.feature.race.impl.ui.model.LapStatus.*
+import com.athimue.backyard.feature.race.impl.ui.model.ResultsUiState
 import com.athimue.backyard.repository.ResultsRepository
 import com.athimue.backyard.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

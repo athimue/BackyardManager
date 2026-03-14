@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.race.ui.screen
+package com.athimue.backyard.feature.race.impl.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -56,11 +56,11 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.R
-import com.athimue.backyard.feature.race.ui.model.LapStatus
-import com.athimue.backyard.feature.race.ui.model.Runner
+import com.athimue.backyard.feature.race.impl.ui.model.LapStatus
+import com.athimue.backyard.feature.race.impl.ui.model.Runner
 import com.athimue.backyard.theme.AppColors
 import com.athimue.backyard.theme.AppTypography
-import com.athimue.backyard.feature.race.ui.viewmodel.ResultsViewModel
+import com.athimue.backyard.feature.race.impl.ui.viewmodel.ResultsViewModel
 
 private val RUNNER_CELL_WIDTH = 140.dp
 private val LAP_CELL_HEIGHT = 48.dp

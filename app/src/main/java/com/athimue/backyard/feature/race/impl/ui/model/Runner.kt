@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.race.ui.model
+package com.athimue.backyard.feature.race.impl.ui.model
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
