@@ -1,8 +1,8 @@
 package com.athimue.backyard.repository
 
-import com.athimue.backyard.feature.result.ui.model.LapResult
-import com.athimue.backyard.feature.result.ui.model.LapStatus
-import com.athimue.backyard.feature.result.ui.model.Runner
+import com.athimue.backyard.feature.race.ui.model.LapResult
+import com.athimue.backyard.feature.race.ui.model.LapStatus
+import com.athimue.backyard.feature.race.ui.model.Runner
 import kotlinx.coroutines.flow.Flow
 
 interface ResultsRepository {

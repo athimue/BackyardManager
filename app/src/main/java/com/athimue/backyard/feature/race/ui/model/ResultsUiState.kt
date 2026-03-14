@@ -1,7 +1,6 @@
-package com.athimue.backyard.feature.result.ui.model
+package com.athimue.backyard.feature.race.ui.model
 
 import androidx.compose.runtime.Immutable
-import com.athimue.backyard.feature.result.ui.model.Runner
 
 private const val MAX_LAPS = 15
 

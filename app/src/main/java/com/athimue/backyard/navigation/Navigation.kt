@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.athimue.backyard.feature.countdown.impl.ui.screen.CountdownScreen
-import com.athimue.backyard.feature.result.ui.screen.ResultsScreen
+import com.athimue.backyard.feature.race.ui.screen.ResultsScreen
 import com.athimue.backyard.feature.settings.ui.screen.SettingsScreen
 import com.athimue.backyard.feature.timer.ui.screen.TimerScreen
 

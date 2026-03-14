@@ -2,7 +2,7 @@ package com.athimue.backyard.feature.settings.ui.model
 
 import androidx.compose.runtime.Immutable
 import com.athimue.backyard.feature.countdown.api.model.RaceState
-import com.athimue.backyard.feature.result.ui.model.Runner
+import com.athimue.backyard.feature.race.ui.model.Runner
 
 @Immutable
 data class SettingsUiState(
