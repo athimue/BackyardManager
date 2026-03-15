@@ -2,10 +2,10 @@ package com.athimue.backyard.di
 
 import android.content.Context
 import androidx.room.Room
-import com.athimue.backyard.data.db.AppDatabase
-import com.athimue.backyard.data.db.dao.LapResultDao
-import com.athimue.backyard.data.db.dao.RaceDao
-import com.athimue.backyard.data.db.dao.RunnerDao
+import com.athimue.backyard.core.database.BackyardDatabase
+import com.athimue.backyard.core.dao.LapResultDao
+import com.athimue.backyard.core.dao.RaceDao
+import com.athimue.backyard.core.dao.RunnerDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,17 +19,17 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
-        Room.databaseBuilder(context, AppDatabase::class.java, "backyard.db")
+    fun provideDatabase(@ApplicationContext context: Context): BackyardDatabase =
+        Room.databaseBuilder(context, BackyardDatabase::class.java, "backyard.db")
             .fallbackToDestructiveMigration()
             .build()
 
     @Provides
-    fun provideRunnerDao(db: AppDatabase): RunnerDao = db.runnerDao()
+    fun provideRunnerDao(db: BackyardDatabase): RunnerDao = db.runnerDao()
 
     @Provides
-    fun provideLapResultDao(db: AppDatabase): LapResultDao = db.lapResultDao()
+    fun provideLapResultDao(db: BackyardDatabase): LapResultDao = db.lapResultDao()
 
     @Provides
-    fun provideRaceDao(db: AppDatabase): RaceDao = db.raceDao()
+    fun provideRaceDao(db: BackyardDatabase): RaceDao = db.raceDao()
 }

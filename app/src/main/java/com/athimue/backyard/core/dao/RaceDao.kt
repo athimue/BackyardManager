@@ -1,10 +1,10 @@
-package com.athimue.backyard.data.db.dao
+package com.athimue.backyard.core.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.athimue.backyard.data.db.entity.RaceEntity
+import com.athimue.backyard.core.entity.RaceEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,7 +18,7 @@ interface RaceDao {
     @Query("SELECT COUNT(*) FROM race")
     suspend fun count(): Int
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insert(race: RaceEntity)
 
     @Query("UPDATE race SET state = :state WHERE id = 1")

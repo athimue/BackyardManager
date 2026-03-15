@@ -1,7 +1,7 @@
 package com.athimue.backyard.feature.race.impl.data.repository
 
-import com.athimue.backyard.data.db.dao.RaceDao
-import com.athimue.backyard.data.db.entity.RaceEntity
+import com.athimue.backyard.core.dao.RaceDao
+import com.athimue.backyard.core.entity.RaceEntity
 import com.athimue.backyard.feature.countdown.api.model.RaceState
 import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import kotlinx.coroutines.CoroutineScope
