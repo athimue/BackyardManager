@@ -41,7 +41,7 @@ private fun formatTime(totalSeconds: Int): String {
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
     val secs = totalSeconds % 60
-    return "%02d:%02d:%02d".format(hours, minutes, secs)
+    return "%02d:%02d".format(minutes, secs)
 }
 
 fun formatCurrentTime(): String {
