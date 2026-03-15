@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.race.impl.data.constant
+package com.athimue.data.repository
 
 import com.athimue.backyard.core.database.entity.RunnerEntity
 

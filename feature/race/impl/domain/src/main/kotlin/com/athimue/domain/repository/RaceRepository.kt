@@ -1,6 +1,6 @@
 package com.athimue.backyard.feature.race.impl.domain.repository
 
-import com.athimue.backyard.feature.countdown.api.model.RaceState
+import com.athimue.backyard.feature.race.api.model.RaceState
 import kotlinx.coroutines.flow.Flow
 
 interface RaceRepository {

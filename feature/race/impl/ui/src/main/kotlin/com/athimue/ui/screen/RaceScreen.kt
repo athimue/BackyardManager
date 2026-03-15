@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.race.impl.ui.screen
+package com.athimue.ui.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -55,19 +55,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
-import com.athimue.backyard.R
+import com.athimue.backyard.core.theme.AppColors
+import com.athimue.backyard.core.theme.AppTypography
+import com.athimue.backyard.feature.race.impl.ui.R
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
-import com.athimue.backyard.feature.race.impl.ui.model.RunnerUiModel
-import com.athimue.backyard.feature.race.impl.ui.viewmodel.ResultsViewModel
-import com.athimue.backyard.theme.AppColors
-import com.athimue.backyard.theme.AppTypography
+import com.athimue.ui.model.RunnerUiModel
+import com.athimue.ui.viewmodel.ResultsViewModel
 
 private val RUNNER_CELL_WIDTH = 140.dp
 private val LAP_CELL_HEIGHT = 48.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ResultsScreen(
+internal fun ResultsScreen(
     viewModel: ResultsViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
     onOpenSettings: () -> Unit = {}
@@ -134,8 +134,8 @@ fun ResultsScreen(
                                 .height(32.dp)
                                 .then(
                                     if (isCurrentLap) Modifier.background(
-                                        AppColors.OrangeSubtle,
-                                        RoundedCornerShape(4.dp)
+                                        color = AppColors.OrangeSubtle,
+                                        shape = RoundedCornerShape(4.dp)
                                     ) else Modifier
                                 ),
                             contentAlignment = Alignment.Center

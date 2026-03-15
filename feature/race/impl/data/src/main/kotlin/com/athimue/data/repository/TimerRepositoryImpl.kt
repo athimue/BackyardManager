@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.race.impl.data.repository
+package com.athimue.data.repository
 
 import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
 import kotlinx.coroutines.flow.Flow

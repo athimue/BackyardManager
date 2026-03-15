@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.race.impl.ui.viewmodel
+package com.athimue.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,10 +6,10 @@ import com.athimue.backyard.feature.race.impl.domain.model.LapStatus.COMPLETED
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus.ELIMINATED
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
 import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
-import com.athimue.backyard.feature.race.impl.ui.model.LapResultUiModel
-import com.athimue.backyard.feature.race.impl.ui.model.ResultsUiState
-import com.athimue.backyard.feature.race.impl.ui.model.toLapResultUiModel
-import com.athimue.backyard.feature.race.impl.ui.model.toRunnerUiModel
+import com.athimue.ui.model.LapResultUiModel
+import com.athimue.ui.model.ResultsUiState
+import com.athimue.ui.model.toLapResultUiModel
+import com.athimue.ui.model.toRunnerUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
