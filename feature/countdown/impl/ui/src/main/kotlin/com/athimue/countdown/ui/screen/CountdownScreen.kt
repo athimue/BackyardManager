@@ -31,7 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
-import com.athimue.backyard.R
+import com.athimue.backyard.feature.countdown.impl.ui.R
 import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel.IN_PROGRESS
 import com.athimue.backyard.feature.countdown.impl.ui.viewmodel.CountdownViewModel
 import com.athimue.backyard.core.theme.AppColors
