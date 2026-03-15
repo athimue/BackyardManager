@@ -21,6 +21,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "Backyard"
 include(":app")
+include(":core:database")
+include(":core:theme")
 include(":feature:race:api")
 include(":feature:race:impl:ui")
 include(":feature:race:impl:data")
