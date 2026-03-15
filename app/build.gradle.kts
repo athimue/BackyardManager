@@ -73,6 +73,9 @@ dependencies {
 
     implementation(project(":core:database"))
     implementation(project(":core:theme"))
+    implementation(project(":feature:countdown:api"))
+    implementation(project(":feature:countdown:impl:ui"))
+    implementation(project(":feature:countdown:impl:domain"))
     implementation(project(":feature:race:api"))
     implementation(project(":feature:race:impl:ui"))
     implementation(project(":feature:race:impl:data"))

@@ -6,35 +6,37 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.athimue.backyard.feature.countdown.impl.ui.screen.CountdownScreen
-import com.athimue.backyard.feature.race.api.navigation.RaceFeatureApi
-import com.athimue.backyard.feature.race.api.navigation.RaceRoutes
+import com.athimue.backyard.feature.countdown.api.CountdownFeatureApi
+import com.athimue.backyard.feature.countdown.api.CountdownRoutes
+import com.athimue.backyard.feature.race.api.RaceFeatureApi
+import com.athimue.backyard.feature.race.api.RaceRoutes
 import com.athimue.backyard.feature.settings.ui.screen.SettingsScreen
 import com.athimue.backyard.feature.timer.ui.screen.TimerScreen
 
-private const val ROUTE_COUNTDOWN = "countdown"
 private const val ROUTE_TIMER = "timer"
 private const val ROUTE_SETTINGS = "settings"
 
 @Composable
 fun BackyardNavHost(
+    countdownFeatureApi: CountdownFeatureApi,
     raceFeatureApi: RaceFeatureApi,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
         navController = navController,
-        startDestination = ROUTE_COUNTDOWN,
+        startDestination = CountdownRoutes.COUNTDOWN,
         modifier = modifier
     ) {
-        composable(ROUTE_COUNTDOWN) {
-            CountdownScreen(
+        with(countdownFeatureApi) {
+            registerGraph(
+                navController = navController,
                 onRaceStarted = {
                     navController.navigate(ROUTE_TIMER) {
-                        popUpTo(ROUTE_COUNTDOWN) { inclusive = true }
+                        popUpTo(CountdownRoutes.COUNTDOWN) { inclusive = true }
                     }
                 },
-                onOpenSettings = { navController.navigate(ROUTE_SETTINGS) }
+                onOpenSettings = { navController.navigate(ROUTE_SETTINGS) },
             )
         }
 
@@ -57,7 +59,7 @@ fun BackyardNavHost(
             SettingsScreen(
                 onBack = { navController.popBackStack() },
                 onRaceReset = {
-                    navController.navigate(ROUTE_COUNTDOWN) {
+                    navController.navigate(CountdownRoutes.COUNTDOWN) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
