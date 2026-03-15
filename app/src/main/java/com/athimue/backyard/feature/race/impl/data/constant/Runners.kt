@@ -1,6 +1,6 @@
 package com.athimue.backyard.feature.race.impl.data.constant
 
-import com.athimue.backyard.core.entity.RunnerEntity
+import com.athimue.backyard.core.database.entity.RunnerEntity
 
 val DEFAULT_RUNNERS = listOf(
     RunnerEntity(1, "Brice"),

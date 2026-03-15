@@ -1,10 +1,10 @@
 package com.athimue.backyard.feature.race.impl.data.repository
 
 import com.athimue.backyard.R
-import com.athimue.backyard.core.dao.LapResultDao
-import com.athimue.backyard.core.dao.RunnerDao
-import com.athimue.backyard.core.entity.LapResultEntity
-import com.athimue.backyard.core.entity.RunnerEntity
+import com.athimue.backyard.core.database.dao.LapResultDao
+import com.athimue.backyard.core.database.dao.RunnerDao
+import com.athimue.backyard.core.database.entity.LapResultEntity
+import com.athimue.backyard.core.database.entity.RunnerEntity
 import com.athimue.backyard.feature.race.impl.data.constant.DEFAULT_RUNNERS
 import com.athimue.backyard.feature.race.impl.domain.model.LapResult
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus

@@ -1,4 +1,4 @@
-package com.athimue.backyard.audio
+package com.athimue.backyard.core.audio
 
 import android.media.AudioManager
 import android.media.ToneGenerator

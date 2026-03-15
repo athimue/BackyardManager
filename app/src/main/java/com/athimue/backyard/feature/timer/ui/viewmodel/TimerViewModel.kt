@@ -2,7 +2,7 @@ package com.athimue.backyard.feature.timer.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.audio.SoundManager
+import com.athimue.backyard.core.audio.SoundManager
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 import com.athimue.backyard.feature.timer.ui.model.TimerUiState
 import com.athimue.backyard.feature.timer.ui.model.formatCurrentTime

@@ -1,10 +1,10 @@
-package com.athimue.backyard.core.dao
+package com.athimue.backyard.core.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.athimue.backyard.core.entity.LapResultEntity
+import com.athimue.backyard.core.database.entity.LapResultEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

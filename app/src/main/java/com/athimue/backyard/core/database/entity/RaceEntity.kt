@@ -1,4 +1,4 @@
-package com.athimue.backyard.core.entity
+package com.athimue.backyard.core.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -3,9 +3,9 @@ package com.athimue.backyard.di
 import android.content.Context
 import androidx.room.Room
 import com.athimue.backyard.core.database.BackyardDatabase
-import com.athimue.backyard.core.dao.LapResultDao
-import com.athimue.backyard.core.dao.RaceDao
-import com.athimue.backyard.core.dao.RunnerDao
+import com.athimue.backyard.core.database.dao.LapResultDao
+import com.athimue.backyard.core.database.dao.RaceDao
+import com.athimue.backyard.core.database.dao.RunnerDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
