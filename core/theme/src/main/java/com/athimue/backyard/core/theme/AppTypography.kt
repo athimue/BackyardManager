@@ -1,4 +1,4 @@
-package com.athimue.backyard.theme
+package com.athimue.backyard.core.theme
 
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight

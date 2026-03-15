@@ -1,4 +1,4 @@
-package com.athimue.backyard.theme
+package com.athimue.backyard.core.theme
 
 import androidx.compose.ui.graphics.Color
 
