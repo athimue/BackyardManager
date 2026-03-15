@@ -2,7 +2,7 @@ package com.athimue.backyard.feature.countdown.impl.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.feature.countdown.api.model.RaceState
+import com.athimue.backyard.feature.race.api.model.RaceState
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.GetRaceStartMillis
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveRaceState
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveStartHour

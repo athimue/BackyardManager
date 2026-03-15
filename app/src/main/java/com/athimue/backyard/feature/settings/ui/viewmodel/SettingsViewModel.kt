@@ -2,7 +2,7 @@ package com.athimue.backyard.feature.settings.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.feature.countdown.api.model.RaceState
+import com.athimue.backyard.feature.race.api.model.RaceState
 import com.athimue.backyard.feature.settings.ui.model.SettingsUiState
 import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository

@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.countdown.api.model
+package com.athimue.backyard.feature.race.api.model
 
 enum class RaceState {
     COUNTDOWN,
