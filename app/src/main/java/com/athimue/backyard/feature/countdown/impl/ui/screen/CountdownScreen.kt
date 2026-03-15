@@ -34,8 +34,8 @@ import androidx.tv.material3.Text
 import com.athimue.backyard.R
 import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel.IN_PROGRESS
 import com.athimue.backyard.feature.countdown.impl.ui.viewmodel.CountdownViewModel
-import com.athimue.backyard.theme.AppColors
-import com.athimue.backyard.theme.AppTypography
+import com.athimue.backyard.core.theme.AppColors
+import com.athimue.backyard.core.theme.AppTypography
 
 @Composable
 internal fun CountdownScreen(

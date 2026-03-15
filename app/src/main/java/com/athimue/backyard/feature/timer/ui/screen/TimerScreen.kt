@@ -34,8 +34,8 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.R
-import com.athimue.backyard.theme.AppColors
-import com.athimue.backyard.theme.AppTypography
+import com.athimue.backyard.core.theme.AppColors
+import com.athimue.backyard.core.theme.AppTypography
 import com.athimue.backyard.feature.timer.ui.viewmodel.TimerViewModel
 
 @Composable

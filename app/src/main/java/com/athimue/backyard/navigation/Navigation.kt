@@ -7,19 +7,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.athimue.backyard.feature.countdown.impl.ui.screen.CountdownScreen
-import com.athimue.backyard.feature.race.impl.ui.screen.ResultsScreen
+import com.athimue.backyard.feature.race.api.navigation.RaceFeatureApi
+import com.athimue.backyard.feature.race.api.navigation.RaceRoutes
 import com.athimue.backyard.feature.settings.ui.screen.SettingsScreen
 import com.athimue.backyard.feature.timer.ui.screen.TimerScreen
 
 private const val ROUTE_COUNTDOWN = "countdown"
 private const val ROUTE_TIMER = "timer"
-private const val ROUTE_RESULTS = "results"
 private const val ROUTE_SETTINGS = "settings"
 
 @Composable
 fun BackyardNavHost(
+    raceFeatureApi: RaceFeatureApi,
+    modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    modifier: Modifier = Modifier
 ) {
     NavHost(
         navController = navController,
@@ -39,15 +40,16 @@ fun BackyardNavHost(
 
         composable(ROUTE_TIMER) {
             TimerScreen(
-                onShowResults = { navController.navigate(ROUTE_RESULTS) },
+                onShowResults = { navController.navigate(RaceRoutes.RESULTS) },
                 onOpenSettings = { navController.navigate(ROUTE_SETTINGS) }
             )
         }
 
-        composable(ROUTE_RESULTS) {
-            ResultsScreen(
+        with(raceFeatureApi) {
+            registerGraph(
+                navController = navController,
                 onBack = { navController.popBackStack() },
-                onOpenSettings = { navController.navigate(ROUTE_SETTINGS) }
+                onOpenSettings = { navController.navigate(ROUTE_SETTINGS) },
             )
         }
 

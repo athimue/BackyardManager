@@ -69,10 +69,12 @@ dependencies {
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.9.7")
 
-    // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-
     debugImplementation("androidx.compose.ui:ui-tooling")
+
+    implementation(project(":core:database"))
+    implementation(project(":core:theme"))
+    implementation(project(":feature:race:api"))
+    implementation(project(":feature:race:impl:ui"))
+    implementation(project(":feature:race:impl:data"))
+    implementation(project(":feature:race:impl:domain"))
 }

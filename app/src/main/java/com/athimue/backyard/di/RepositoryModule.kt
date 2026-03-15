@@ -1,10 +1,10 @@
 package com.athimue.backyard.di
 
-import com.athimue.backyard.feature.race.impl.data.repository.TimerRepositoryImpl
+import com.athimue.data.repository.TimerRepositoryImpl
 import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
-import com.athimue.backyard.feature.race.impl.data.repository.RaceRepositoryImpl
-import com.athimue.backyard.feature.race.impl.data.repository.ResultsRepositoryImpl
+import com.athimue.data.repository.RaceRepositoryImpl
+import com.athimue.data.repository.ResultsRepositoryImpl
 import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
 import dagger.Binds
 import dagger.Module
