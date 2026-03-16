@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.timer.ui.model
+package com.athimue.timer.ui.model
 
 import androidx.compose.runtime.Immutable
 import java.util.Calendar

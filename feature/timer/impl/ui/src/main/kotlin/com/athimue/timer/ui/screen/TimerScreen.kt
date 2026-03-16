@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.timer.ui.screen
+package com.athimue.timer.ui.screen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
@@ -33,10 +33,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
-import com.athimue.backyard.R
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
-import com.athimue.backyard.feature.timer.ui.viewmodel.TimerViewModel
+import com.athimue.timer.ui.viewmodel.TimerViewModel
+import com.athimue.backyard.core.theme.R as CoreR
 
 @Composable
 fun TimerScreen(
@@ -69,7 +69,7 @@ fun TimerScreen(
         ) {
             Image(
                 modifier = Modifier.size(120.dp),
-                painter = painterResource(R.drawable.logo),
+                painter = painterResource(CoreR.drawable.logo),
                 contentDescription = null
             )
 
@@ -94,7 +94,7 @@ fun TimerScreen(
 
             Image(
                 modifier = Modifier.size(120.dp),
-                painter = painterResource(R.drawable.logo),
+                painter = painterResource(CoreR.drawable.logo),
                 contentDescription = null
             )
         }
