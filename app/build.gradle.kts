@@ -73,6 +73,7 @@ dependencies {
 
     implementation(project(":core:database"))
     implementation(project(":core:theme"))
+    implementation(project(":core:audio"))
     implementation(project(":feature:countdown:api"))
     implementation(project(":feature:countdown:impl:ui"))
     implementation(project(":feature:countdown:impl:domain"))
@@ -80,4 +81,8 @@ dependencies {
     implementation(project(":feature:race:impl:ui"))
     implementation(project(":feature:race:impl:data"))
     implementation(project(":feature:race:impl:domain"))
+    implementation(project(":feature:settings:api"))
+    implementation(project(":feature:settings:impl:ui"))
+    implementation(project(":feature:timer:api"))
+    implementation(project(":feature:timer:impl:ui"))
 }

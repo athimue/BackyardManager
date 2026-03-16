@@ -2,7 +2,6 @@ package com.athimue.backyard.feature.countdown.impl.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.athimue.backyard.feature.race.api.model.RaceState
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.GetRaceStartMillis
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveRaceState
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveStartHour
@@ -12,7 +11,7 @@ import com.athimue.backyard.feature.countdown.impl.domain.usecase.SetRaceState
 import com.athimue.backyard.feature.countdown.impl.ui.model.CountdownUiState
 import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel
 import com.athimue.backyard.feature.countdown.impl.ui.model.toRaceStateUiModel
-import com.athimue.countdown.ui.viewmodel.formatCurrentTime
+import com.athimue.backyard.feature.race.api.model.RaceState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

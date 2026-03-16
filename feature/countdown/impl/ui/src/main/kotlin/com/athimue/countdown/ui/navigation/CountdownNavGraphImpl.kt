@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.athimue.backyard.feature.countdown.api.CountdownFeatureApi
 import com.athimue.backyard.feature.countdown.api.CountdownRoutes
-import com.athimue.countdown.ui.screen.CountdownScreen
+import com.athimue.backyard.feature.countdown.impl.ui.screen.CountdownScreen
 import javax.inject.Inject
 
 class CountdownNavGraphImpl @Inject constructor() : CountdownFeatureApi {
