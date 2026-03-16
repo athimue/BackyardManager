@@ -1,4 +1,4 @@
-package com.athimue.backyard.feature.settings.ui.screen
+package com.athimue.settings.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,7 +31,7 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
-import com.athimue.backyard.feature.settings.ui.viewmodel.SettingsViewModel
+import com.athimue.settings.ui.viewmodel.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
