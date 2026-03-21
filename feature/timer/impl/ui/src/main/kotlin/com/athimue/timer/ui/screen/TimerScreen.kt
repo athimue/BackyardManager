@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
+import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import com.athimue.backyard.core.EVENT_NAME
 import com.athimue.backyard.core.EVENT_SUBTITLE
@@ -188,7 +191,9 @@ fun TimerScreen(
         }
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(bottom = 16.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(bottom = 16.dp),
             verticalArrangement = Arrangement.Bottom
         ) {
             // ── Progress bar ─────────────────────────────────────────────────────
@@ -227,7 +232,7 @@ fun TimerScreen(
                 Button(
                     onClick = onShowResults,
                     colors = ButtonDefaults.colors(
-                        containerColor = AppColors.Yellow,
+                        containerColor = AppColors.SurfaceMid,
                         focusedContainerColor = AppColors.Yellow,
                         contentColor = AppColors.White,
                         focusedContentColor = AppColors.White
@@ -250,12 +255,21 @@ fun TimerScreen(
                         focusedContentColor = AppColors.White
                     )
                 ) {
-                    Text(
-                        text = "⚙  Réglages",
-                        fontSize = AppTypography.bodySmallSize,
-                        fontFamily = AppTypography.fontFamily,
-                        fontWeight = AppTypography.semiBold
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings",
+                            tint = AppColors.Yellow,
+                        )
+                        Text(
+                            text = "  Réglages",
+                            fontSize = AppTypography.bodySmallSize,
+                            fontFamily = AppTypography.fontFamily,
+                            fontWeight = AppTypography.semiBold
+                        )
+                    }
                 }
             }
         }

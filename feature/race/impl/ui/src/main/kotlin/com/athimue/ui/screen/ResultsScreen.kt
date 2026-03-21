@@ -25,6 +25,10 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,19 +58,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
+import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
-import com.athimue.backyard.core.EVENT_DATE
-import com.athimue.backyard.core.EVENT_EDITION
 import com.athimue.backyard.core.EVENT_NAME
+import com.athimue.backyard.core.EVENT_SUBTITLE
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
-import com.athimue.backyard.core.theme.R as CoreR
 import com.athimue.ui.model.LapStatusUiModel
 import com.athimue.ui.model.RunnerUiModel
 import com.athimue.ui.viewmodel.ResultsViewModel
+import com.athimue.backyard.core.theme.R as CoreR
 
 private val RUNNER_CELL_WIDTH = 140.dp
-private val LAP_CELL_HEIGHT = 36.dp
+private val LAP_CELL_HEIGHT = 24.dp
 private val LIFELINE_HEIGHT = 20.dp
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -132,17 +136,18 @@ internal fun ResultsScreen(
                 ) {
                     uiState.laps.forEach { lap ->
                         val isCurrentLap = lap == uiState.currentLap
-                        Box(
+                        Column(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(32.dp)
+                                .height(22.dp)
                                 .then(
                                     if (isCurrentLap) Modifier.background(
                                         color = AppColors.Yellow,
                                         shape = RoundedCornerShape(4.dp)
                                     ) else Modifier
                                 ),
-                            contentAlignment = Alignment.Center
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
                                 text = lap.toString(),
@@ -193,7 +198,7 @@ internal fun ResultsScreen(
                     ) {
                         Text(
                             text = runner.firstName,
-                            fontSize = AppTypography.bodySmallSize,
+                            fontSize = AppTypography.labelSize,
                             fontFamily = AppTypography.fontFamily,
                             fontWeight = AppTypography.bold,
                             maxLines = 1,
@@ -224,7 +229,10 @@ internal fun ResultsScreen(
                 }
 
                 // Lap cells + lifeline
-                Column(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -249,7 +257,7 @@ internal fun ResultsScreen(
                                 else -> AppColors.GraySubtle
                             }
 
-                            Box(
+                            Column(
                                 modifier = Modifier
                                     .weight(1f)
                                     .height(LAP_CELL_HEIGHT)
@@ -280,7 +288,8 @@ internal fun ResultsScreen(
                                         color = cellBorder,
                                         shape = RoundedCornerShape(4.dp)
                                     ),
-                                contentAlignment = Alignment.Center
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 when {
                                     isCross -> Text(
@@ -369,45 +378,38 @@ private fun ResultsHeader(
         Image(
             painter = painterResource(CoreR.drawable.logo),
             contentDescription = null,
-            modifier = Modifier.size(72.dp)
+            modifier = Modifier.size(44.dp)
         )
 
-        Box(
+        Row(
             modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
+            Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = EVENT_NAME,
-                fontSize = AppTypography.titleSize,
+                fontSize = AppTypography.bodyLargeSize,
                 fontFamily = AppTypography.fontFamily,
                 fontWeight = AppTypography.bold,
                 color = AppColors.Yellow,
                 textAlign = TextAlign.Center
             )
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = EVENT_SUBTITLE,
+                fontSize = AppTypography.labelSize,
+                fontFamily = AppTypography.fontFamily,
+                color = AppColors.Yellow
+            )
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         Column(
-            modifier = Modifier
-                .width(160.dp)
-                .padding(start = 8.dp),
+            modifier = Modifier.width(160.dp),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(
-                text = EVENT_DATE,
-                fontSize = AppTypography.bodySmallSize,
-                fontFamily = AppTypography.fontFamily,
-                fontWeight = AppTypography.semiBold,
-                color = AppColors.White,
-                textAlign = TextAlign.End
-            )
-            Text(
-                text = EVENT_EDITION,
-                fontSize = AppTypography.labelSize,
-                fontFamily = AppTypography.fontFamily,
-                color = AppColors.Yellow,
-                textAlign = TextAlign.End
-            )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
                     onClick = onBack,
@@ -416,7 +418,11 @@ private fun ResultsHeader(
                         focusedContainerColor = AppColors.Yellow
                     )
                 ) {
-                    Text("←", fontFamily = AppTypography.fontFamily)
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = AppColors.Yellow
+                    )
                 }
                 Button(
                     onClick = onOpenSettings,
@@ -425,7 +431,11 @@ private fun ResultsHeader(
                         focusedContainerColor = AppColors.Yellow
                     )
                 ) {
-                    Text("⚙", fontFamily = AppTypography.fontFamily)
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                        tint = AppColors.Yellow
+                    )
                 }
             }
         }
