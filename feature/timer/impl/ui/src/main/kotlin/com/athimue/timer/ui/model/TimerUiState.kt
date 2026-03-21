@@ -1,9 +1,8 @@
 package com.athimue.timer.ui.model
 
 import androidx.compose.runtime.Immutable
+import com.athimue.backyard.core.LAP_DURATION_SECONDS
 import java.util.Calendar
-
-private const val LAP_DURATION_SECONDS = 3600
 
 @Immutable
 data class TimerUiState(
@@ -24,6 +23,9 @@ data class TimerUiState(
     val remainingTimeFormatted: String
         get() = formatTime(remainingSecondsInLap)
 
+    val remainingSecondsFormatted: String
+        get() = formatSeconds(remainingSecondsInLap)
+
     val lapProgress: Float
         get() = elapsedSecondsInLap.toFloat() / LAP_DURATION_SECONDS
 
@@ -38,10 +40,14 @@ data class TimerUiState(
 }
 
 private fun formatTime(totalSeconds: Int): String {
-    val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
     val secs = totalSeconds % 60
     return "%02d:%02d".format(minutes, secs)
+}
+
+private fun formatSeconds(totalSeconds: Int): String {
+    val secs = totalSeconds % 60
+    return "%02d".format(secs, secs)
 }
 
 fun formatCurrentTime(): String {

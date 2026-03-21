@@ -2,6 +2,7 @@ package com.athimue.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.athimue.backyard.core.LAP_DURATION_SECONDS
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus.COMPLETED
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus.ELIMINATED
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private const val LAP_DURATION_SECONDS = 3600
 
 @HiltViewModel
 class ResultsViewModel @Inject constructor(

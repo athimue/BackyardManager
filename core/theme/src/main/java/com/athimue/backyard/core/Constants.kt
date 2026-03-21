@@ -1,4 +1,3 @@
 package com.athimue.backyard.core
 
-class Constants {
-}
+const val LAP_DURATION_SECONDS = 60 // ONLY FOR DEBUG, 3600

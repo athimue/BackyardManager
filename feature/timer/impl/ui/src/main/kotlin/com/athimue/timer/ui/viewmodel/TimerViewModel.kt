@@ -2,6 +2,7 @@ package com.athimue.timer.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.athimue.backyard.core.LAP_DURATION_SECONDS
 import com.athimue.backyard.core.audio.SoundManager
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 import com.athimue.timer.ui.model.TimerUiState
@@ -20,8 +21,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-private const val LAP_DURATION_SECONDS = 3600
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
