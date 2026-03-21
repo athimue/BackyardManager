@@ -3,9 +3,11 @@ package com.athimue.settings.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.feature.race.api.model.RaceState
+import com.athimue.settings.ui.model.SettingsRunnerUiModel
 import com.athimue.settings.ui.model.SettingsUiState
 import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
+import com.athimue.settings.ui.model.toSettingsUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +40,7 @@ class SettingsViewModel @Inject constructor(
                     SettingsUiState(
                         startHour = hour,
                         startMinute = minute,
-                        runners = runners,
+                        runners = runners.map { it.toSettingsUiModel() },
                         raceState = state
                     )
                 }.collect { _uiState.value = it }

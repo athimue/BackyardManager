@@ -61,7 +61,7 @@ import com.athimue.backyard.core.EVENT_NAME
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
 import com.athimue.backyard.core.theme.R as CoreR
-import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
+import com.athimue.ui.model.LapStatusUiModel
 import com.athimue.ui.model.RunnerUiModel
 import com.athimue.ui.viewmodel.ResultsViewModel
 
@@ -235,15 +235,15 @@ internal fun ResultsScreen(
                             val cellBackground = when {
                                 isCross -> AppColors.RedFilled
                                 isFocused -> AppColors.Yellow
-                                lapResult?.status == LapStatus.COMPLETED -> AppColors.GreenFilled
-                                lapResult?.status == LapStatus.ELIMINATED -> AppColors.RedFilled
+                                lapResult?.status == LapStatusUiModel.COMPLETED -> AppColors.GreenFilled
+                                lapResult?.status == LapStatusUiModel.ELIMINATED -> AppColors.RedFilled
                                 else -> AppColors.SurfaceMid
                             }
                             val cellBorder = when {
                                 isFocused -> AppColors.Yellow
                                 isCross -> AppColors.RedFilledBorder
-                                lapResult?.status == LapStatus.COMPLETED -> AppColors.GreenFilledBorder
-                                lapResult?.status == LapStatus.ELIMINATED -> AppColors.RedFilledBorder
+                                lapResult?.status == LapStatusUiModel.COMPLETED -> AppColors.GreenFilledBorder
+                                lapResult?.status == LapStatusUiModel.ELIMINATED -> AppColors.RedFilledBorder
                                 else -> AppColors.GraySubtle
                             }
 
@@ -288,7 +288,7 @@ internal fun ResultsScreen(
                                         fontWeight = FontWeight.Bold
                                     )
 
-                                    lapResult?.status == LapStatus.ELIMINATED -> Text(
+                                    lapResult?.status == LapStatusUiModel.ELIMINATED -> Text(
                                         text = lapResult.time.ifBlank { "DNF" },
                                         color = AppColors.White,
                                         fontSize = AppTypography.labelSize,
@@ -298,7 +298,7 @@ internal fun ResultsScreen(
                                         maxLines = 1
                                     )
 
-                                    lapResult?.status == LapStatus.COMPLETED -> Text(
+                                    lapResult?.status == LapStatusUiModel.COMPLETED -> Text(
                                         text = lapResult.time,
                                         color = AppColors.White,
                                         fontSize = AppTypography.labelSize,

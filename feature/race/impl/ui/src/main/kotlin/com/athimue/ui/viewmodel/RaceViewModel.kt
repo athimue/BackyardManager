@@ -3,11 +3,11 @@ package com.athimue.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.core.LAP_DURATION_SECONDS
-import com.athimue.backyard.feature.race.impl.domain.model.LapStatus.COMPLETED
-import com.athimue.backyard.feature.race.impl.domain.model.LapStatus.ELIMINATED
+import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
 import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
 import com.athimue.ui.model.LapResultUiModel
+import com.athimue.ui.model.LapStatusUiModel
 import com.athimue.ui.model.ResultsUiState
 import com.athimue.ui.model.toLapResultUiModel
 import com.athimue.ui.model.toRunnerUiModel
@@ -38,10 +38,10 @@ class ResultsViewModel @Inject constructor(
         val sortedRunners = runners.map { it.toRunnerUiModel() }.sortedWith(
             Comparator { a, b ->
                 val timeA = lapResults.find {
-                    it.runnerId == a.dossardId && it.lapNumber == currentLap && it.status == COMPLETED
+                    it.runnerId == a.dossardId && it.lapNumber == currentLap && it.status == LapStatus.COMPLETED
                 }?.time
                 val timeB = lapResults.find {
-                    it.runnerId == b.dossardId && it.lapNumber == currentLap && it.status == COMPLETED
+                    it.runnerId == b.dossardId && it.lapNumber == currentLap && it.status == LapStatus.COMPLETED
                 }?.time
                 when {
                     timeA != null && timeB != null -> timeA.compareTo(timeB)
@@ -74,7 +74,7 @@ class ResultsViewModel @Inject constructor(
             val currentLap = totalSeconds / LAP_DURATION_SECONDS + 1
             if (_uiState.value.statusFor(runnerId, currentLap) == null) {
                 val lapTime = formatLapTime(totalSeconds % LAP_DURATION_SECONDS)
-                repository.setLapResult(runnerId, currentLap, lapTime, COMPLETED)
+                repository.setLapResult(runnerId, currentLap, lapTime, LapStatus.COMPLETED)
             }
         }
     }
@@ -93,8 +93,8 @@ class ResultsViewModel @Inject constructor(
             val currentLap = totalSeconds / LAP_DURATION_SECONDS + 1
 
             when (_uiState.value.statusFor(runnerId, lapNumber)) {
-                null, ELIMINATED -> return@launch
-                COMPLETED -> {
+                null, LapStatusUiModel.ELIMINATED -> return@launch
+                LapStatusUiModel.COMPLETED -> {
                     if (lapNumber == currentLap) {
                         repository.removeLapResult(runnerId, lapNumber)
                     }

@@ -1,7 +1,6 @@
 package com.athimue.ui.model
 
 import androidx.compose.runtime.Immutable
-import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 
 private const val MAX_LAPS = 15
 
@@ -27,13 +26,13 @@ data class ResultsUiState(
     fun lapResultFor(runnerId: Int, lapNumber: Int): LapResultUiModel? =
         results[runnerId]?.get(lapNumber)
 
-    fun statusFor(runnerId: Int, lapNumber: Int): LapStatus? =
+    fun statusFor(runnerId: Int, lapNumber: Int): LapStatusUiModel? =
         lapResultFor(runnerId, lapNumber)?.status
 
     fun eliminationLapFor(runnerId: Int): Int? =
         results[runnerId]
             ?.values
-            ?.filter { it.status == LapStatus.ELIMINATED }
+            ?.filter { it.status == LapStatusUiModel.ELIMINATED }
             ?.minByOrNull { it.lapNumber }
             ?.lapNumber
 
@@ -43,11 +42,11 @@ data class ResultsUiState(
     }
 
     fun completedLapsFor(runnerId: Int): Int =
-        results[runnerId]?.values?.count { it.status == LapStatus.COMPLETED } ?: 0
+        results[runnerId]?.values?.count { it.status == LapStatusUiModel.COMPLETED } ?: 0
 
     fun bestLapTimeFor(runnerId: Int): String? =
         results[runnerId]?.values
-            ?.filter { it.status == LapStatus.COMPLETED }
+            ?.filter { it.status == LapStatusUiModel.COMPLETED }
             ?.minByOrNull { parseTimeToSeconds(it.time) }
             ?.time
 }

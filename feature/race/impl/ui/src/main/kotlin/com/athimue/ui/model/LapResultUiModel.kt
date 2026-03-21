@@ -9,12 +9,17 @@ data class LapResultUiModel(
     val runnerId: Int,
     val lapNumber: Int,
     val time: String,
-    val status: LapStatus = LapStatus.COMPLETED
+    val status: LapStatusUiModel = LapStatusUiModel.COMPLETED
 )
 
 fun LapResult.toLapResultUiModel() = LapResultUiModel(
     runnerId = runnerId,
     lapNumber = lapNumber,
     time = time,
-    status = status
+    status = status.toUiModel()
 )
+
+private fun LapStatus.toUiModel() = when (this) {
+    LapStatus.COMPLETED -> LapStatusUiModel.COMPLETED
+    LapStatus.ELIMINATED -> LapStatusUiModel.ELIMINATED
+}
