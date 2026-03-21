@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,11 +32,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
-import com.athimue.backyard.feature.countdown.impl.ui.R
-import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel.IN_PROGRESS
-import com.athimue.backyard.feature.countdown.impl.ui.viewmodel.CountdownViewModel
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
+import com.athimue.backyard.core.theme.R as CoreR
+import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel.IN_PROGRESS
+import com.athimue.backyard.feature.countdown.impl.ui.viewmodel.CountdownViewModel
 
 @Composable
 internal fun CountdownScreen(
@@ -61,39 +62,54 @@ internal fun CountdownScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(AppColors.Black)
-            .padding(32.dp),
+            .padding(20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         // ── Header ──────────────────────────────────────────────────────────
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
             Image(
-                painter = painterResource(R.drawable.logo),
+                painter = painterResource(CoreR.drawable.logo),
                 contentDescription = null,
                 modifier = Modifier.size(100.dp)
             )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                text = "BACKYARD DU GARAGE",
-                fontSize = AppTypography.titleSize,
-                fontFamily = AppTypography.fontFamily,
-                fontWeight = AppTypography.bold,
-                color = AppColors.Orange,
-                textAlign = TextAlign.Center
-            )
-            Text(
-                text = "1ère édition  ·  17 avril 2026",
-                fontSize = AppTypography.labelSize,
-                fontFamily = AppTypography.fontFamily,
-                color = AppColors.WhiteDim,
-                textAlign = TextAlign.Center
+            Spacer(Modifier.width(48.dp))
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "BACKYARD DU GARAGE",
+                    fontSize = AppTypography.titleSize,
+                    fontFamily = AppTypography.titleFontFamily,
+                    fontWeight = AppTypography.bold,
+                    color = AppColors.Yellow,
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = "1ère édition - 17 avril 2026",
+                    fontSize = 18.sp,
+                    fontFamily = AppTypography.fontFamily,
+                    color = AppColors.WhiteDim,
+                    textAlign = TextAlign.Center
+                )
+            }
+            Spacer(Modifier.width(48.dp))
+            Image(
+                painter = painterResource(CoreR.drawable.logo),
+                contentDescription = null,
+                modifier = Modifier.size(100.dp)
             )
         }
 
         // ── Countdown ────────────────────────────────────────────────────────
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "Race starts at ${uiState.startTimeFormatted}",
+                text = "Début de la course à ${uiState.startTimeFormatted}",
                 fontSize = AppTypography.bodyMediumSize,
                 fontFamily = AppTypography.fontFamily,
                 color = AppColors.Gray,
@@ -102,16 +118,16 @@ internal fun CountdownScreen(
             Spacer(Modifier.height(12.dp))
             Text(
                 text = uiState.countdownFormatted,
-                fontSize = 96.sp,
+                fontSize = 130.sp,
                 fontFamily = AppTypography.fontFamily,
                 fontWeight = AppTypography.bold,
-                color = AppColors.Orange,
+                color = AppColors.Yellow,
                 modifier = Modifier.alpha(pulse),
                 textAlign = TextAlign.Center
             )
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
             Text(
-                text = "Current time: ${uiState.currentTime}",
+                text = "Heure actuel : ${uiState.currentTime}",
                 fontSize = AppTypography.bodySmallSize,
                 fontFamily = AppTypography.fontFamily,
                 color = AppColors.WhiteDim,
@@ -145,7 +161,7 @@ internal fun CountdownScreen(
                 onClick = onOpenSettings,
                 colors = ButtonDefaults.colors(
                     containerColor = AppColors.SurfaceMid,
-                    focusedContainerColor = AppColors.Orange,
+                    focusedContainerColor = AppColors.Yellow,
                     contentColor = AppColors.White,
                     focusedContentColor = AppColors.White
                 )

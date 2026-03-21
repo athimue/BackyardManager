@@ -57,7 +57,7 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
-import com.athimue.backyard.feature.race.impl.ui.R
+import com.athimue.backyard.core.theme.R as CoreR
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 import com.athimue.ui.model.RunnerUiModel
 import com.athimue.ui.viewmodel.ResultsViewModel
@@ -134,7 +134,7 @@ internal fun ResultsScreen(
                                 .height(32.dp)
                                 .then(
                                     if (isCurrentLap) Modifier.background(
-                                        color = AppColors.OrangeSubtle,
+                                        color = AppColors.Yellow,
                                         shape = RoundedCornerShape(4.dp)
                                     ) else Modifier
                                 ),
@@ -142,7 +142,7 @@ internal fun ResultsScreen(
                         ) {
                             Text(
                                 text = lap.toString(),
-                                color = if (isCurrentLap) AppColors.Orange else AppColors.Gray,
+                                color = if (isCurrentLap) AppColors.Yellow else AppColors.Gray,
                                 fontSize = AppTypography.bodySmallSize,
                                 fontFamily = AppTypography.fontFamily,
                                 fontWeight = if (isCurrentLap) AppTypography.bold else AppTypography.semiBold
@@ -186,8 +186,8 @@ internal fun ResultsScreen(
                             onClick = { viewModel.onRunnerNameClicked(runner.dossardId) },
                             colors = ButtonDefaults.colors(
                                 containerColor = AppColors.SurfaceMid,
-                                focusedContainerColor = AppColors.OrangeDim,
-                                contentColor = AppColors.Orange,
+                                focusedContainerColor = AppColors.Yellow,
+                                contentColor = AppColors.Yellow,
                                 focusedContentColor = AppColors.White
                             )
                         ) {
@@ -231,13 +231,13 @@ internal fun ResultsScreen(
 
                             val cellBackground = when {
                                 isCross -> AppColors.RedFilled
-                                isFocused -> AppColors.OrangeSubtle
+                                isFocused -> AppColors.Yellow
                                 lapResult?.status == LapStatus.COMPLETED -> AppColors.GreenFilled
                                 lapResult?.status == LapStatus.ELIMINATED -> AppColors.RedFilled
                                 else -> AppColors.SurfaceMid
                             }
                             val cellBorder = when {
-                                isFocused -> AppColors.Orange
+                                isFocused -> AppColors.Yellow
                                 isCross -> AppColors.RedFilledBorder
                                 lapResult?.status == LapStatus.COMPLETED -> AppColors.GreenFilledBorder
                                 lapResult?.status == LapStatus.ELIMINATED -> AppColors.RedFilledBorder
@@ -362,7 +362,7 @@ private fun ResultsHeader(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(R.drawable.logo),
+            painter = painterResource(CoreR.drawable.logo),
             contentDescription = null,
             modifier = Modifier.size(72.dp)
         )
@@ -376,7 +376,7 @@ private fun ResultsHeader(
                 fontSize = AppTypography.titleSize,
                 fontFamily = AppTypography.fontFamily,
                 fontWeight = AppTypography.bold,
-                color = AppColors.Orange,
+                color = AppColors.Yellow,
                 textAlign = TextAlign.Center
             )
         }
@@ -400,7 +400,7 @@ private fun ResultsHeader(
                 text = "1ère édition",
                 fontSize = AppTypography.labelSize,
                 fontFamily = AppTypography.fontFamily,
-                color = AppColors.Orange,
+                color = AppColors.Yellow,
                 textAlign = TextAlign.End
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -408,7 +408,7 @@ private fun ResultsHeader(
                     onClick = onBack,
                     colors = ButtonDefaults.colors(
                         containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.Orange
+                        focusedContainerColor = AppColors.Yellow
                     )
                 ) {
                     Text("←", fontFamily = AppTypography.fontFamily)
@@ -417,7 +417,7 @@ private fun ResultsHeader(
                     onClick = onOpenSettings,
                     colors = ButtonDefaults.colors(
                         containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.Orange
+                        focusedContainerColor = AppColors.Yellow
                     )
                 ) {
                     Text("⚙", fontFamily = AppTypography.fontFamily)
@@ -430,7 +430,7 @@ private fun ResultsHeader(
         modifier = Modifier
             .fillMaxWidth()
             .height(2.dp)
-            .background(AppColors.Orange)
+            .background(AppColors.Yellow)
     )
 }
 
@@ -475,7 +475,7 @@ private fun RunnerLifeLine(
                         .fillMaxWidth(completedLaps.toFloat() / totalLaps)
                         .height(3.dp)
                         .align(Alignment.CenterStart)
-                        .background(AppColors.Orange, RoundedCornerShape(2.dp))
+                        .background(AppColors.Yellow, RoundedCornerShape(2.dp))
                 )
             }
 
@@ -499,7 +499,7 @@ private fun RunnerLifeLine(
                     .background(AppColors.SurfaceMid)
                     .border(
                         width = 2.dp,
-                        color = if (completedLaps > 0) AppColors.Orange else AppColors.GraySubtle,
+                        color = if (completedLaps > 0) AppColors.Yellow else AppColors.GraySubtle,
                         shape = CircleShape
                     )
             )

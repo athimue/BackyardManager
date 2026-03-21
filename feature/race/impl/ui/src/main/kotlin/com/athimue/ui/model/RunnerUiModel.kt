@@ -2,8 +2,8 @@ package com.athimue.ui.model
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Immutable
-import com.athimue.backyard.feature.race.impl.ui.R
 import com.athimue.backyard.feature.race.impl.domain.model.Runner
+import com.athimue.backyard.core.theme.R as CoreR
 
 @Immutable
 data class RunnerUiModel(
@@ -15,5 +15,5 @@ data class RunnerUiModel(
 fun Runner.toRunnerUiModel() = RunnerUiModel(
     dossardId = dossardId,
     firstName = firstName,
-    photoResId = R.drawable.logo,
+    photoResId = CoreR.drawable.logo,
 )

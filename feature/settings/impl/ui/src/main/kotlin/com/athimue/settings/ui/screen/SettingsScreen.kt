@@ -69,13 +69,13 @@ fun SettingsScreen(
                         fontSize = AppTypography.titleSize,
                         fontFamily = AppTypography.fontFamily,
                         fontWeight = AppTypography.bold,
-                        color = AppColors.Orange
+                        color = AppColors.Yellow
                     )
                     Button(
                         onClick = onBack,
                         colors = ButtonDefaults.colors(
                             containerColor = AppColors.SurfaceMid,
-                            focusedContainerColor = AppColors.Orange
+                            focusedContainerColor = AppColors.Yellow
                         )
                     ) {
                         Text("← Back", fontFamily = AppTypography.fontFamily)
@@ -87,7 +87,7 @@ fun SettingsScreen(
                     Modifier
                         .fillMaxWidth()
                         .height(2.dp)
-                        .background(AppColors.Orange)
+                        .background(AppColors.Yellow)
                 )
             }
 
@@ -107,7 +107,7 @@ fun SettingsScreen(
                         modifier = Modifier
                             .size(64.dp)
                             .background(AppColors.SurfaceDark, RoundedCornerShape(8.dp))
-                            .border(1.dp, AppColors.Orange, RoundedCornerShape(8.dp)),
+                            .border(1.dp, AppColors.Yellow, RoundedCornerShape(8.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -129,7 +129,7 @@ fun SettingsScreen(
                         modifier = Modifier
                             .size(64.dp)
                             .background(AppColors.SurfaceDark, RoundedCornerShape(8.dp))
-                            .border(1.dp, AppColors.Orange, RoundedCornerShape(8.dp)),
+                            .border(1.dp, AppColors.Yellow, RoundedCornerShape(8.dp)),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
@@ -145,7 +145,7 @@ fun SettingsScreen(
                     Spacer(Modifier.width(24.dp))
                     Text(
                         text = "→  ${uiState.startTimeFormatted}",
-                        color = AppColors.Orange,
+                        color = AppColors.Yellow,
                         fontSize = AppTypography.bodyMediumSize,
                         fontFamily = AppTypography.fontFamily,
                         fontWeight = AppTypography.bold
@@ -165,7 +165,7 @@ fun SettingsScreen(
                         onClick = { viewModel.restoreDefaultRunners() },
                         colors = ButtonDefaults.colors(
                             containerColor = AppColors.SurfaceMid,
-                            focusedContainerColor = AppColors.OrangeDim
+                            focusedContainerColor = AppColors.Yellow
                         )
                     ) {
                         Text(
@@ -237,7 +237,7 @@ fun SettingsScreen(
 private fun SectionTitle(text: String) {
     Text(
         text = text.uppercase(),
-        color = AppColors.Orange,
+        color = AppColors.Yellow,
         fontSize = AppTypography.labelSize,
         fontFamily = AppTypography.fontFamily,
         fontWeight = AppTypography.semiBold,
@@ -251,7 +251,7 @@ private fun StepButton(label: String, onClick: () -> Unit) {
         onClick = onClick,
         colors = ButtonDefaults.colors(
             containerColor = AppColors.SurfaceMid,
-            focusedContainerColor = AppColors.Orange
+            focusedContainerColor = AppColors.Yellow
         )
     ) {
         Text(
