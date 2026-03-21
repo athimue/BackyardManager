@@ -3,10 +3,7 @@ package com.athimue.backyard.core.theme
 import androidx.compose.ui.graphics.Color
 
 object AppColors {
-    val Orange = Color(0xFFFFC107)
-    val OrangeDim = Color(0xFFF9A825)
-    val OrangeSubtle = Color(0x33FFC107)
-    val Yellow = Color(0xFFFFC107)
+    val Yellow = Color(0xFFFFCF02)
     val White = Color.White
     val WhiteDim = Color(0xCCFFFFFF)
     val Black = Color(0xFF000000)
