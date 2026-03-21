@@ -12,7 +12,6 @@ import com.athimue.backyard.feature.countdown.impl.ui.model.CountdownUiState
 import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel
 import com.athimue.backyard.feature.countdown.impl.ui.model.toRaceStateUiModel
 import com.athimue.backyard.feature.race.api.model.RaceState
-import com.athimue.timer.ui.model.formatCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,4 +87,13 @@ class CountdownViewModel @Inject constructor(
             setRaceState(RaceState.IN_PROGRESS)
         }
     }
+}
+
+private fun formatCurrentTime(): String {
+    val c = java.util.Calendar.getInstance()
+    return "%02d:%02d:%02d".format(
+        c.get(java.util.Calendar.HOUR_OF_DAY),
+        c.get(java.util.Calendar.MINUTE),
+        c.get(java.util.Calendar.SECOND)
+    )
 }
