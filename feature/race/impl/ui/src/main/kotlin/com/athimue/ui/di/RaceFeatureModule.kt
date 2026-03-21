@@ -1,7 +1,7 @@
 package com.athimue.ui.di
 
 import com.athimue.backyard.feature.race.api.navigation.RaceFeatureApi
-import com.athimue.ui.navigation.RaceNavGraphImpl
+import com.athimue.ui.navigation.ResultsNavGraphImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,5 +14,5 @@ abstract class RaceFeatureModule {
 
     @Binds
     @Singleton
-    abstract fun bindRaceFeatureApi(impl: RaceNavGraphImpl): RaceFeatureApi
+    abstract fun bindRaceFeatureApi(impl: ResultsNavGraphImpl): RaceFeatureApi
 }
