@@ -16,6 +16,9 @@ interface RunnerDao {
     @Query("SELECT COUNT(*) FROM runners")
     suspend fun count(): Int
 
+    @Query("SELECT MAX(dossardId) FROM runners")
+    suspend fun getMaxId(): Int?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(runner: RunnerEntity)
 

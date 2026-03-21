@@ -32,12 +32,13 @@ class RaceRepositoryImpl @Inject constructor(
 
     override fun observeRaceState(): Flow<RaceState> =
         raceDao.observe().map { entity ->
-            entity?.state?.let { runCatching { RaceState.valueOf(it) }.getOrNull() }
-                ?: RaceState.COUNTDOWN
+            entity?.state?.let { raw ->
+                RaceState.entries.firstOrNull { it.name == raw } ?: RaceState.COUNTDOWN
+            } ?: RaceState.COUNTDOWN
         }
 
     override fun observeStartHour(): Flow<Int> =
-        raceDao.observe().map { it?.startHour ?: 20 }
+        raceDao.observe().map { it?.startHour ?: 9 }
 
     override fun observeStartMinute(): Flow<Int> =
         raceDao.observe().map { it?.startMinute ?: 0 }

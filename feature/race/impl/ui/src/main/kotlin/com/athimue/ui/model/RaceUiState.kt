@@ -48,6 +48,19 @@ data class ResultsUiState(
     fun bestLapTimeFor(runnerId: Int): String? =
         results[runnerId]?.values
             ?.filter { it.status == LapStatus.COMPLETED }
-            ?.minByOrNull { it.time }
+            ?.minByOrNull { parseTimeToSeconds(it.time) }
             ?.time
 }
+
+private fun parseTimeToSeconds(time: String): Int {
+    val parts = time.split(":")
+    return when (parts.size) {
+        2 -> parts[0].toIntOrNull()?.times(60).orZero() + parts[1].toIntOrNull().orZero()
+        3 -> parts[0].toIntOrNull()?.times(3600).orZero() +
+                parts[1].toIntOrNull()?.times(60).orZero() +
+                parts[2].toIntOrNull().orZero()
+        else -> Int.MAX_VALUE
+    }
+}
+
+private fun Int?.orZero() = this ?: 0

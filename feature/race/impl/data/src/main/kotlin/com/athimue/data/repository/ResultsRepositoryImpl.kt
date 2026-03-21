@@ -52,7 +52,7 @@ class ResultsRepositoryImpl @Inject constructor(
         withContext(Dispatchers.IO) { lapResultDao.delete(runnerId, lapNumber) }
 
     override suspend fun addRunner(firstName: String) = withContext(Dispatchers.IO) {
-        val nextId = (runnerDao.count()) + 100
+        val nextId = (runnerDao.getMaxId() ?: 0) + 1
         runnerDao.insert(RunnerEntity(dossardId = nextId, firstName = firstName))
     }
 
@@ -77,6 +77,6 @@ class ResultsRepositoryImpl @Inject constructor(
         runnerId = runnerId,
         lapNumber = lapNumber,
         time = time,
-        status = runCatching { LapStatus.valueOf(status) }.getOrDefault(LapStatus.COMPLETED)
+        status = LapStatus.entries.firstOrNull { it.name == status } ?: LapStatus.COMPLETED
     )
 }
