@@ -1,5 +1,6 @@
 package com.athimue.backyard.core.theme
 
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
@@ -7,6 +8,7 @@ import androidx.compose.ui.unit.sp
 
 object AppTypography {
     val fontFamily = FontFamily.Monospace
+    val titleFontFamily = FontFamily(Font(R.font.capsmall_clean))
 
     val titleSize: TextUnit = 52.sp
     val subtitleSize: TextUnit = 28.sp
