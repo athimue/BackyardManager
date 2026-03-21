@@ -48,7 +48,7 @@ fun TimerScreen(
 
     // Flash background orange briefly when a new lap starts
     val flashColor by animateColorAsState(
-        targetValue = if (uiState.lapJustChanged) AppColors.OrangeDim else AppColors.Black,
+        targetValue = if (uiState.lapJustChanged) AppColors.Yellow else AppColors.Black,
         animationSpec = tween(400),
         label = "lap_flash"
     )
@@ -77,13 +77,13 @@ fun TimerScreen(
                 Text(
                     text = "BACKYARD DU GARAGE",
                     fontSize = AppTypography.titleSize,
-                    fontFamily = AppTypography.fontFamily,
+                    fontFamily = AppTypography.titleFontFamily,
                     fontWeight = AppTypography.bold,
-                    color = AppColors.Orange,
+                    color = AppColors.Yellow,
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "1ère édition  ·  17 avril 2026",
+                    text = "1ère édition  -  17 avril 2026",
                     fontSize = AppTypography.labelSize,
                     fontFamily = AppTypography.fontFamily,
                     fontWeight = AppTypography.semiBold,
@@ -105,24 +105,53 @@ fun TimerScreen(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
                 .height(2.dp)
-                .background(AppColors.Orange)
+                .background(AppColors.Yellow)
         )
 
-        // ── Clock ────────────────────────────────────────────────────────────
-        Row(
+        // ── Prochain départ (main) + Clock ───────────────────────────────────
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(vertical = 4.dp, horizontal = 16.dp),
         ) {
-            Text(
-                text = uiState.currentTime,
-                fontSize = AppTypography.clockSize,
-                fontFamily = AppTypography.fontFamily,
-                fontWeight = AppTypography.bold,
-                color = AppColors.White,
-            )
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "PROCHAIN DÉPART",
+                    color = AppColors.Gray,
+                    textAlign = TextAlign.Center,
+                    fontSize = AppTypography.bodySmallSize,
+                    fontFamily = AppTypography.fontFamily,
+                    fontWeight = AppTypography.semiBold,
+                    letterSpacing = 2.sp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = uiState.remainingTimeFormatted,
+                    color = AppColors.White,
+                    textAlign = TextAlign.Center,
+                    fontSize = 100.sp,
+                    fontFamily = AppTypography.fontFamily,
+                    fontWeight = AppTypography.bold,
+                )
+            }
+            Column(
+                modifier = Modifier.align(Alignment.TopEnd),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Text(
+                    text = uiState.currentTime,
+                    color = AppColors.WhiteDim,
+                    textAlign = TextAlign.Center,
+                    fontSize = AppTypography.bodyMediumSize,
+                    fontFamily = AppTypography.fontFamily,
+                    fontWeight = AppTypography.normal,
+                )
+            }
         }
 
         // ── Info cells ───────────────────────────────────────────────────────
@@ -135,91 +164,97 @@ fun TimerScreen(
         ) {
             LabelValueCell(
                 modifier = Modifier.weight(1f),
-                label = "Lap",
-                value = uiState.currentLap.toString()
+                label = "Tour",
+                value = uiState.currentLap.toString(),
+                labelTextSize = 12.sp,
+                valueTextSize = 28.sp
             )
             LabelValueCell(
                 modifier = Modifier.weight(1f),
-                label = "Runners",
-                value = if (uiState.activeRunnersCount > 0) uiState.activeRunnersCount.toString() else "—"
+                label = "Coureurs",
+                value = if (uiState.activeRunnersCount > 0) uiState.activeRunnersCount.toString() else "—",
+                labelTextSize = 12.sp,
+                valueTextSize = 28.sp
             )
             LabelValueCell(
                 modifier = Modifier.weight(1f),
-                label = "Next start",
-                value = uiState.remainingTimeFormatted
-            )
-            LabelValueCell(
-                modifier = Modifier.weight(1f),
-                label = "Elapsed",
-                value = uiState.elapsedRaceFormatted
+                label = "Temps écoulé",
+                value = uiState.elapsedRaceFormatted,
+                labelTextSize = 12.sp,
+                valueTextSize = 28.sp
             )
         }
 
-        // ── Progress bar ─────────────────────────────────────────────────────
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp, horizontal = 16.dp),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.fillMaxSize().padding(bottom = 16.dp),
+            verticalArrangement = Arrangement.Bottom
         ) {
-            ProgressBar(
-                progress = uiState.lapProgress,
-                urgent = uiState.isLapEndUrgent,
+            // ── Progress bar ─────────────────────────────────────────────────────
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(28.dp)
-            )
-
-            if (uiState.showEndLapCountdown) {
-                Text(
-                    text = uiState.remainingTimeFormatted,
-                    color = AppColors.White,
-                    fontSize = AppTypography.chronoSize,
-                    fontWeight = AppTypography.bold,
-                    maxLines = 1,
-                    textAlign = TextAlign.Center,
-                    fontFamily = AppTypography.fontFamily,
-                )
-            }
-        }
-
-        // ── Action buttons ───────────────────────────────────────────────────
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
-        ) {
-            Button(
-                onClick = onShowResults,
-                colors = ButtonDefaults.colors(
-                    containerColor = AppColors.OrangeDim,
-                    focusedContainerColor = AppColors.Orange,
-                    contentColor = AppColors.White,
-                    focusedContentColor = AppColors.White
-                )
+                    .padding(vertical = 20.dp, horizontal = 16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "📋  Results",
-                    fontSize = AppTypography.bodySmallSize,
-                    fontFamily = AppTypography.fontFamily,
-                    fontWeight = AppTypography.semiBold
+                ProgressBar(
+                    progress = uiState.lapProgress,
+                    urgent = uiState.isLapEndUrgent,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(28.dp)
                 )
+
+                if (uiState.showEndLapCountdown) {
+                    Text(
+                        text = uiState.remainingSecondsFormatted,
+                        color = AppColors.White,
+                        fontSize = AppTypography.chronoSize,
+                        fontWeight = AppTypography.bold,
+                        maxLines = 1,
+                        textAlign = TextAlign.Center,
+                        fontFamily = AppTypography.fontFamily,
+                    )
+                }
             }
 
-            Button(
-                onClick = onOpenSettings,
-                colors = ButtonDefaults.colors(
-                    containerColor = AppColors.SurfaceMid,
-                    focusedContainerColor = AppColors.Orange,
-                    contentColor = AppColors.White,
-                    focusedContentColor = AppColors.White
-                )
+            // ── Action buttons ───────────────────────────────────────────────────
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
             ) {
-                Text(
-                    text = "⚙  Settings",
-                    fontSize = AppTypography.bodySmallSize,
-                    fontFamily = AppTypography.fontFamily,
-                    fontWeight = AppTypography.semiBold
-                )
+                Button(
+                    onClick = onShowResults,
+                    colors = ButtonDefaults.colors(
+                        containerColor = AppColors.Yellow,
+                        focusedContainerColor = AppColors.Yellow,
+                        contentColor = AppColors.White,
+                        focusedContentColor = AppColors.White
+                    )
+                ) {
+                    Text(
+                        text = "📋  Résultats",
+                        fontSize = AppTypography.bodySmallSize,
+                        fontFamily = AppTypography.fontFamily,
+                        fontWeight = AppTypography.semiBold
+                    )
+                }
+
+                Button(
+                    onClick = onOpenSettings,
+                    colors = ButtonDefaults.colors(
+                        containerColor = AppColors.SurfaceMid,
+                        focusedContainerColor = AppColors.Yellow,
+                        contentColor = AppColors.White,
+                        focusedContentColor = AppColors.White
+                    )
+                ) {
+                    Text(
+                        text = "⚙  Réglages",
+                        fontSize = AppTypography.bodySmallSize,
+                        fontFamily = AppTypography.fontFamily,
+                        fontWeight = AppTypography.semiBold
+                    )
+                }
             }
         }
     }
@@ -229,13 +264,15 @@ fun TimerScreen(
 private fun LabelValueCell(
     modifier: Modifier = Modifier,
     label: String,
-    value: String
+    value: String,
+    labelTextSize: TextUnit = AppTypography.labelSize,
+    valueTextSize: TextUnit = AppTypography.bodyLargeSize
 ) {
     Column(
         modifier = modifier
             .background(AppColors.SurfaceDark, RoundedCornerShape(8.dp))
-            .border(width = 2.dp, color = AppColors.Orange, shape = RoundedCornerShape(8.dp))
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .border(width = 2.dp, color = AppColors.Yellow, shape = RoundedCornerShape(8.dp))
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -243,7 +280,7 @@ private fun LabelValueCell(
             text = label.uppercase(),
             color = AppColors.Gray,
             textAlign = TextAlign.Center,
-            fontSize = AppTypography.labelSize,
+            fontSize = labelTextSize,
             fontFamily = AppTypography.fontFamily,
             fontWeight = AppTypography.semiBold,
             letterSpacing = 2.sp
@@ -253,7 +290,7 @@ private fun LabelValueCell(
             text = value,
             color = AppColors.White,
             textAlign = TextAlign.Center,
-            fontSize = AppTypography.bodyLargeSize,
+            fontSize = valueTextSize,
             fontFamily = AppTypography.fontFamily,
             fontWeight = AppTypography.bold,
         )
@@ -267,7 +304,7 @@ private fun ProgressBar(
     urgent: Boolean = false,
 ) {
     val fillColor by animateColorAsState(
-        targetValue = if (urgent) Color(0xFFE53935) else AppColors.Orange,
+        targetValue = if (urgent) Color(0xFFE53935) else AppColors.Yellow,
         animationSpec = tween(600),
         label = "progress_color"
     )
