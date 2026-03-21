@@ -1,41 +1,47 @@
 package com.athimue.backyard.core.audio
 
-import android.content.Context
 import android.media.AudioManager
 import android.media.ToneGenerator
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class SoundManager @Inject constructor(
-    @ApplicationContext private val context: Context
-) {
-    private val scope = CoroutineScope(Dispatchers.IO)
+private const val LAP_START_VOLUME = 100
+private const val LAP_START_TONE_DURATION_MS = 150
+private const val LAP_START_REPEAT_DELAY_MS = 300L
+private const val LAP_START_BEEP_COUNT = 3
 
-    // 3 short beeps on new lap start
+private const val WARNING_VOLUME = 80
+private const val WARNING_TONE_DURATION_MS = 250
+private const val WARNING_REPEAT_DELAY_MS = 500L
+private const val WARNING_BEEP_COUNT = 2
+
+@Singleton
+class SoundManager @Inject constructor() {
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     fun playNewLapStart() {
         scope.launch {
-            repeat(3) {
-                val tone = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
-                tone.startTone(ToneGenerator.TONE_PROP_BEEP, 150)
-                delay(300)
+            repeat(LAP_START_BEEP_COUNT) {
+                val tone = ToneGenerator(AudioManager.STREAM_MUSIC, LAP_START_VOLUME)
+                tone.startTone(ToneGenerator.TONE_PROP_BEEP, LAP_START_TONE_DURATION_MS)
+                delay(LAP_START_REPEAT_DELAY_MS)
                 tone.release()
             }
         }
     }
 
-    // 2 warning beeps at 30s remaining
     fun playEndLapWarning() {
         scope.launch {
-            repeat(2) {
-                val tone = ToneGenerator(AudioManager.STREAM_MUSIC, 80)
-                tone.startTone(ToneGenerator.TONE_PROP_BEEP2, 250)
-                delay(500)
+            repeat(WARNING_BEEP_COUNT) {
+                val tone = ToneGenerator(AudioManager.STREAM_MUSIC, WARNING_VOLUME)
+                tone.startTone(ToneGenerator.TONE_PROP_BEEP2, WARNING_TONE_DURATION_MS)
+                delay(WARNING_REPEAT_DELAY_MS)
                 tone.release()
             }
         }

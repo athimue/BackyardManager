@@ -3,6 +3,7 @@ package com.athimue.timer.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.core.LAP_DURATION_SECONDS
+import com.athimue.backyard.core.LAP_WARNING_SECONDS
 import com.athimue.backyard.core.audio.SoundManager
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 import com.athimue.timer.ui.model.TimerUiState
@@ -88,7 +89,7 @@ class TimerViewModel @Inject constructor(
                 }
 
                 // End-of-lap warning (once per lap, at 30s remaining)
-                if (remaining == 30 && warningPlayedForLap != currentLap) {
+                if (remaining <= LAP_WARNING_SECONDS && warningPlayedForLap != currentLap) {
                     soundManager.playEndLapWarning()
                     warningPlayedForLap = currentLap
                 }
