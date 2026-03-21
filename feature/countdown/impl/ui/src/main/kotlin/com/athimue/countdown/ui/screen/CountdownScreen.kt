@@ -32,6 +32,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
+import com.athimue.backyard.core.EVENT_NAME
+import com.athimue.backyard.core.EVENT_SUBTITLE
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
 import com.athimue.backyard.core.theme.R as CoreR
@@ -82,7 +84,7 @@ internal fun CountdownScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "BACKYARD DU GARAGE",
+                    text = EVENT_NAME,
                     fontSize = AppTypography.titleSize,
                     fontFamily = AppTypography.titleFontFamily,
                     fontWeight = AppTypography.bold,
@@ -91,7 +93,7 @@ internal fun CountdownScreen(
                 )
                 Text(
                     modifier = Modifier.padding(top = 8.dp),
-                    text = "1ère édition - 17 avril 2026",
+                    text = EVENT_SUBTITLE,
                     fontSize = 18.sp,
                     fontFamily = AppTypography.fontFamily,
                     color = AppColors.WhiteDim,
@@ -127,7 +129,7 @@ internal fun CountdownScreen(
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                text = "Heure actuel : ${uiState.currentTime}",
+                text = "Heure actuelle : ${uiState.currentTime}",
                 fontSize = AppTypography.bodySmallSize,
                 fontFamily = AppTypography.fontFamily,
                 color = AppColors.WhiteDim,

@@ -12,6 +12,7 @@ import com.athimue.backyard.feature.countdown.impl.ui.model.CountdownUiState
 import com.athimue.backyard.feature.countdown.impl.ui.model.RaceStateUiModel
 import com.athimue.backyard.feature.countdown.impl.ui.model.toRaceStateUiModel
 import com.athimue.backyard.feature.race.api.model.RaceState
+import com.athimue.timer.ui.model.formatCurrentTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,9 +45,9 @@ class CountdownViewModel @Inject constructor(
     private fun observeRaceConfig() {
         viewModelScope.launch {
             combine(
-                observeRaceState.invoke(),
-                observeStartHour.invoke(),
-                observeStartMinute.invoke()
+                observeRaceState(),
+                observeStartHour(),
+                observeStartMinute()
             ) { state, hour, minute -> Triple(state, hour, minute) }
                 .collect { (state, hour, minute) ->
                     _uiState.update { it.copy(raceState = state.toRaceStateUiModel(), startHour = hour, startMinute = minute) }
@@ -57,7 +58,7 @@ class CountdownViewModel @Inject constructor(
     private fun startCountdownTicker() {
         viewModelScope.launch {
             while (isActive) {
-                val scheduledMillis = getRaceStartMillis.invoke()
+                val scheduledMillis = getRaceStartMillis()
                 val now = System.currentTimeMillis()
                 val diffSeconds = (scheduledMillis - now) / 1000
 
@@ -65,8 +66,8 @@ class CountdownViewModel @Inject constructor(
                 // A large negative diffSeconds means the configured time is way in the past
                 // (e.g. after a race reset mid-day), which must not trigger an immediate re-start.
                 if (diffSeconds in -300L..0L && _uiState.value.raceState == RaceStateUiModel.COUNTDOWN) {
-                    setActualStartMillis.invoke(scheduledMillis)
-                    setRaceState.invoke(RaceState.IN_PROGRESS)
+                    setActualStartMillis(scheduledMillis)
+                    setRaceState(RaceState.IN_PROGRESS)
                 }
 
                 _uiState.update {
@@ -83,17 +84,8 @@ class CountdownViewModel @Inject constructor(
     fun startRaceNow() {
         viewModelScope.launch {
             // Manual start: record the exact moment the button was pressed.
-            setActualStartMillis.invoke(System.currentTimeMillis())
-            setRaceState.invoke(RaceState.IN_PROGRESS)
+            setActualStartMillis(System.currentTimeMillis())
+            setRaceState(RaceState.IN_PROGRESS)
         }
     }
-}
-
-private fun formatCurrentTime(): String {
-    val c = java.util.Calendar.getInstance()
-    return "%02d:%02d:%02d".format(
-        c.get(java.util.Calendar.HOUR_OF_DAY),
-        c.get(java.util.Calendar.MINUTE),
-        c.get(java.util.Calendar.SECOND)
-    )
 }

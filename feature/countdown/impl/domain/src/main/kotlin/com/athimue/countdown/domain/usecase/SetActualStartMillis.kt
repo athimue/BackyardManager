@@ -7,6 +7,6 @@ class SetActualStartMillis @Inject constructor(
     private val raceRepository: RaceRepository
 ) {
     suspend operator fun invoke(millis: Long) {
-        return raceRepository.setActualStartMillis(millis)
+        raceRepository.setActualStartMillis(millis)
     }
 }

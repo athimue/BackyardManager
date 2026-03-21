@@ -55,6 +55,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
+import com.athimue.backyard.core.EVENT_DATE
+import com.athimue.backyard.core.EVENT_EDITION
+import com.athimue.backyard.core.EVENT_NAME
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
 import com.athimue.backyard.core.theme.R as CoreR
@@ -372,7 +375,7 @@ private fun ResultsHeader(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "BACKYARD DU GARAGE",
+                text = EVENT_NAME,
                 fontSize = AppTypography.titleSize,
                 fontFamily = AppTypography.fontFamily,
                 fontWeight = AppTypography.bold,
@@ -389,7 +392,7 @@ private fun ResultsHeader(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "17 avril 2026",
+                text = EVENT_DATE,
                 fontSize = AppTypography.bodySmallSize,
                 fontFamily = AppTypography.fontFamily,
                 fontWeight = AppTypography.semiBold,
@@ -397,7 +400,7 @@ private fun ResultsHeader(
                 textAlign = TextAlign.End
             )
             Text(
-                text = "1ère édition",
+                text = EVENT_EDITION,
                 fontSize = AppTypography.labelSize,
                 fontFamily = AppTypography.fontFamily,
                 color = AppColors.Yellow,

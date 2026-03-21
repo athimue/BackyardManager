@@ -27,12 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Text
+import com.athimue.backyard.core.EVENT_NAME
+import com.athimue.backyard.core.EVENT_SUBTITLE
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
 import com.athimue.timer.ui.viewmodel.TimerViewModel
@@ -75,7 +77,7 @@ fun TimerScreen(
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "BACKYARD DU GARAGE",
+                    text = EVENT_NAME,
                     fontSize = AppTypography.titleSize,
                     fontFamily = AppTypography.titleFontFamily,
                     fontWeight = AppTypography.bold,
@@ -83,7 +85,7 @@ fun TimerScreen(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "1ère édition  -  17 avril 2026",
+                    text = EVENT_SUBTITLE,
                     fontSize = AppTypography.labelSize,
                     fontFamily = AppTypography.fontFamily,
                     fontWeight = AppTypography.semiBold,
@@ -323,4 +325,4 @@ private fun ProgressBar(
     }
 }
 
-private val Int.sp get() = TextUnit(this.toFloat(), TextUnitType.Sp)
+

@@ -8,6 +8,6 @@ class SetRaceState @Inject constructor(
     private val raceRepository: RaceRepository
 ) {
     suspend operator fun invoke(raceState: RaceState) {
-        return raceRepository.setRaceState(raceState)
+        raceRepository.setRaceState(raceState)
     }
 }

@@ -29,7 +29,7 @@ class ResultsRepositoryImpl @Inject constructor(
     init {
         scope.launch {
             if (runnerDao.count() == 0) {
-                runnerDao.insertAll(DEFAULT_RUNNERS)
+                runnerDao.insertAll(DefaultRunners.list)
             }
         }
     }
@@ -65,7 +65,7 @@ class ResultsRepositoryImpl @Inject constructor(
     override suspend fun restoreDefaultRunners() = withContext(Dispatchers.IO) {
         runnerDao.deleteAll()
         lapResultDao.deleteAll()
-        runnerDao.insertAll(DEFAULT_RUNNERS)
+        runnerDao.insertAll(DefaultRunners.list)
     }
 
     private fun RunnerEntity.toDomain() = Runner(
