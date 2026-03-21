@@ -66,7 +66,8 @@ import com.athimue.ui.model.RunnerUiModel
 import com.athimue.ui.viewmodel.ResultsViewModel
 
 private val RUNNER_CELL_WIDTH = 140.dp
-private val LAP_CELL_HEIGHT = 48.dp
+private val LAP_CELL_HEIGHT = 36.dp
+private val LIFELINE_HEIGHT = 20.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -85,7 +86,7 @@ internal fun ResultsScreen(
             .fillMaxSize()
             .background(AppColors.Black)
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
         item { ResultsHeader(onBack = onBack, onOpenSettings = onOpenSettings) }
@@ -145,7 +146,7 @@ internal fun ResultsScreen(
                         ) {
                             Text(
                                 text = lap.toString(),
-                                color = if (isCurrentLap) AppColors.Yellow else AppColors.Gray,
+                                color = AppColors.Gray,
                                 fontSize = AppTypography.bodySmallSize,
                                 fontFamily = AppTypography.fontFamily,
                                 fontWeight = if (isCurrentLap) AppTypography.bold else AppTypography.semiBold
@@ -165,46 +166,46 @@ internal fun ResultsScreen(
 
         // ── Runner rows ──────────────────────────────────────────────────────
         itemsIndexed(uiState.runners) { runnerIndex, runner ->
-            Column {
-                Row(
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AppColors.SurfaceCell, RoundedCornerShape(4.dp))
+                    .padding(vertical = 2.dp)
+                    .focusGroup(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Runner identity
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            AppColors.SurfaceCell,
-                            RoundedCornerShape(4.dp)
-                        )
-                        .padding(vertical = 2.dp)
-                        .focusGroup(),
-                    verticalAlignment = Alignment.CenterVertically
+                        .width(RUNNER_CELL_WIDTH)
+                        .padding(end = 8.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Runner identity
-                    Column(
-                        modifier = Modifier
-                            .width(RUNNER_CELL_WIDTH)
-                            .padding(end = 8.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    Button(
+                        onClick = { viewModel.onRunnerNameClicked(runner.dossardId) },
+                        colors = ButtonDefaults.colors(
+                            containerColor = AppColors.SurfaceMid,
+                            focusedContainerColor = AppColors.Yellow,
+                            contentColor = AppColors.Yellow,
+                            focusedContentColor = AppColors.White
+                        )
                     ) {
-                        Button(
-                            onClick = { viewModel.onRunnerNameClicked(runner.dossardId) },
-                            colors = ButtonDefaults.colors(
-                                containerColor = AppColors.SurfaceMid,
-                                focusedContainerColor = AppColors.Yellow,
-                                contentColor = AppColors.Yellow,
-                                focusedContentColor = AppColors.White
-                            )
-                        ) {
-                            Text(
-                                text = runner.firstName,
-                                fontSize = AppTypography.bodySmallSize,
-                                fontFamily = AppTypography.fontFamily,
-                                fontWeight = AppTypography.bold,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
                         Text(
-                            modifier = Modifier.padding(top = 4.dp),
+                            text = runner.firstName,
+                            fontSize = AppTypography.bodySmallSize,
+                            fontFamily = AppTypography.fontFamily,
+                            fontWeight = AppTypography.bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.padding(top = 2.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
                             text = "${uiState.completedLapsFor(runner.dossardId)} laps",
                             color = AppColors.Gray,
                             fontSize = AppTypography.labelSize,
@@ -212,8 +213,7 @@ internal fun ResultsScreen(
                         )
                         uiState.bestLapTimeFor(runner.dossardId)?.let { best ->
                             Text(
-                                modifier = Modifier.padding(top = 2.dp),
-                                text = "Best: $best",
+                                text = "· $best",
                                 color = AppColors.GreenFilledBorder,
                                 fontSize = AppTypography.labelSize,
                                 fontFamily = AppTypography.fontFamily,
@@ -221,8 +221,10 @@ internal fun ResultsScreen(
                             )
                         }
                     }
+                }
 
-                    // Lap cells
+                // Lap cells + lifeline
+                Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(4.dp)
@@ -311,13 +313,13 @@ internal fun ResultsScreen(
                             }
                         }
                     }
-                }
 
-                RunnerLifeLine(
-                    runner = runner,
-                    completedLaps = uiState.completedLapsFor(runner.dossardId),
-                    totalLaps = uiState.laps.size
-                )
+                    RunnerLifeLine(
+                        runner = runner,
+                        completedLaps = uiState.completedLapsFor(runner.dossardId),
+                        totalLaps = uiState.laps.size
+                    )
+                }
             }
         }
 
@@ -444,68 +446,57 @@ private fun RunnerLifeLine(
     totalLaps: Int,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 6.dp)
+            .height(LIFELINE_HEIGHT)
+            .padding(horizontal = 2.dp, vertical = 2.dp)
     ) {
-        Spacer(modifier = Modifier.width(RUNNER_CELL_WIDTH))
+        val totalWidth = maxWidth
+        val cellWidth = if (totalLaps > 0) totalWidth / totalLaps else totalWidth
+        val photoSize = 16.dp
+        val photoRadius = photoSize / 2
 
-        BoxWithConstraints(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(40.dp)
-                .padding(horizontal = 2.dp)
-        ) {
-            val totalWidth = maxWidth
-            val cellWidth = totalWidth / totalLaps
-            val photoSize = 36.dp
-            val photoRadius = photoSize / 2
+                .height(2.dp)
+                .align(Alignment.CenterStart)
+                .background(AppColors.GraySubtle, RoundedCornerShape(2.dp))
+        )
 
-            // Background track
+        if (completedLaps > 0) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(3.dp)
+                    .fillMaxWidth(completedLaps.toFloat() / totalLaps)
+                    .height(2.dp)
                     .align(Alignment.CenterStart)
-                    .background(AppColors.GraySubtle, RoundedCornerShape(2.dp))
-            )
-
-            // Completed portion of the track
-            if (completedLaps > 0) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(completedLaps.toFloat() / totalLaps)
-                        .height(3.dp)
-                        .align(Alignment.CenterStart)
-                        .background(AppColors.Yellow, RoundedCornerShape(2.dp))
-                )
-            }
-
-            // Runner photo positioned at their last completed lap
-            val photoOffsetX = if (completedLaps > 0) {
-                val raw = cellWidth * (completedLaps - 0.5f) - photoRadius
-                raw.coerceIn(0.dp, totalWidth - photoSize)
-            } else {
-                0.dp
-            }
-
-            Image(
-                painter = painterResource(runner.photoResId),
-                contentDescription = runner.firstName,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(photoSize)
-                    .offset(x = photoOffsetX)
-                    .align(Alignment.CenterStart)
-                    .clip(CircleShape)
-                    .background(AppColors.SurfaceMid)
-                    .border(
-                        width = 2.dp,
-                        color = if (completedLaps > 0) AppColors.Yellow else AppColors.GraySubtle,
-                        shape = CircleShape
-                    )
+                    .background(AppColors.Yellow, RoundedCornerShape(2.dp))
             )
         }
+
+        val photoOffsetX = if (completedLaps > 0) {
+            val raw = cellWidth * (completedLaps - 0.5f) - photoRadius
+            raw.coerceIn(0.dp, totalWidth - photoSize)
+        } else {
+            0.dp
+        }
+
+        Image(
+            painter = painterResource(runner.photoResId),
+            contentDescription = runner.firstName,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(photoSize)
+                .offset(x = photoOffsetX)
+                .align(Alignment.CenterStart)
+                .clip(CircleShape)
+                .background(AppColors.SurfaceMid)
+                .border(
+                    width = 1.dp,
+                    color = if (completedLaps > 0) AppColors.Yellow else AppColors.GraySubtle,
+                    shape = CircleShape
+                )
+        )
     }
 }
