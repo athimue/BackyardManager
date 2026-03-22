@@ -89,7 +89,7 @@ internal fun ResultsScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(AppColors.Black)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(all = 2.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
@@ -101,7 +101,7 @@ internal fun ResultsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(AppColors.SurfaceDark, RoundedCornerShape(6.dp))
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
                 horizontalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 StatChip(
@@ -139,7 +139,6 @@ internal fun ResultsScreen(
                         Column(
                             modifier = Modifier
                                 .weight(1f)
-                                .height(22.dp)
                                 .then(
                                     if (isCurrentLap) Modifier.background(
                                         color = AppColors.Yellow,
@@ -206,7 +205,7 @@ internal fun ResultsScreen(
                         )
                     }
                     Row(
-                        modifier = Modifier.padding(top = 2.dp),
+                        modifier = Modifier.padding(vertical = 2.dp),
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -231,7 +230,7 @@ internal fun ResultsScreen(
                 // Lap cells + lifeline
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center
+                    verticalArrangement = Arrangement.SpaceEvenly
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -372,7 +371,7 @@ private fun ResultsHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 8.dp),
+            .padding(bottom = 2.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
