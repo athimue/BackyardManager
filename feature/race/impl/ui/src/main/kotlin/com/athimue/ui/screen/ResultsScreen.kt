@@ -1,5 +1,12 @@
 package com.athimue.ui.screen
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -70,7 +77,7 @@ import com.athimue.backyard.core.theme.R as CoreR
 
 private val RUNNER_CELL_WIDTH = 140.dp
 private val LAP_CELL_HEIGHT = 24.dp
-private val LIFELINE_HEIGHT = 30.dp
+private val LIFELINE_HEIGHT = 36.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -455,25 +462,44 @@ private fun RunnerLifeLine(
     totalLaps: Int,
     modifier: Modifier = Modifier
 ) {
+    val infiniteTransition = rememberInfiniteTransition(label = "headBump")
+    val bumpOffsetY by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0f,
+        animationSpec = infiniteRepeatable(
+            animation = keyframes {
+                durationMillis = 900
+                0f at 0 using LinearEasing
+                -10f at 250 using FastOutSlowInEasing
+                0f at 500 using FastOutSlowInEasing
+                0f at 900 using LinearEasing
+            },
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "bumpOffsetY"
+    )
+
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
     ) {
         BoxWithConstraints(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(LIFELINE_HEIGHT)
                 .padding(horizontal = 2.dp, vertical = 2.dp)
         ) {
             val cellWidth = if (totalLaps > 0) maxWidth / totalLaps else maxWidth
-            val photoSize = 200.dp
+            val photoSize = 24.dp
             val photoRadius = photoSize / 2
+            val lineBottomPadding = 8.dp
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(2.dp)
-                    .align(Alignment.CenterStart)
+                    .align(Alignment.BottomStart)
+                    .offset(y = -lineBottomPadding)
                     .background(AppColors.GraySubtle, RoundedCornerShape(2.dp))
             )
 
@@ -482,7 +508,8 @@ private fun RunnerLifeLine(
                     modifier = Modifier
                         .fillMaxWidth(completedLaps.toFloat() / totalLaps)
                         .height(2.dp)
-                        .align(Alignment.CenterStart)
+                        .align(Alignment.BottomStart)
+                        .offset(y = -lineBottomPadding)
                         .background(AppColors.Yellow, RoundedCornerShape(2.dp))
                 )
             }
@@ -497,11 +524,12 @@ private fun RunnerLifeLine(
             Image(
                 painter = painterResource(runner.photoResId),
                 contentDescription = runner.firstName,
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(photoSize)
-                    .offset(x = photoOffsetX)
-                    .align(Alignment.CenterStart)
+                    .offset(x = photoOffsetX, y = (bumpOffsetY - lineBottomPadding.value).dp)
+                    .align(Alignment.BottomStart)
+                    .clip(CircleShape)
             )
         }
     }
