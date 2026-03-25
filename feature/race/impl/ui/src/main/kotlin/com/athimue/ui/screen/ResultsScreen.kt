@@ -27,7 +27,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -323,6 +322,7 @@ internal fun ResultsScreen(
                     }
 
                     RunnerLifeLine(
+                        modifier = Modifier.padding(top = 4.dp),
                         runner = runner,
                         completedLaps = uiState.completedLapsFor(runner.dossardId),
                         totalLaps = uiState.laps.size
@@ -389,7 +389,7 @@ private fun ResultsHeader(
             Text(
                 text = EVENT_NAME,
                 fontSize = AppTypography.bodyLargeSize,
-                fontFamily = AppTypography.fontFamily,
+                fontFamily = AppTypography.titleFontFamily,
                 fontWeight = AppTypography.bold,
                 color = AppColors.Yellow,
                 textAlign = TextAlign.Center
@@ -420,7 +420,7 @@ private fun ResultsHeader(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = AppColors.Yellow
+                        tint = AppColors.GraySubtle
                     )
                 }
                 Button(
@@ -433,7 +433,7 @@ private fun ResultsHeader(
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = "Settings",
-                        tint = AppColors.Yellow
+                        tint = AppColors.GraySubtle
                     )
                 }
             }
@@ -455,57 +455,61 @@ private fun RunnerLifeLine(
     totalLaps: Int,
     modifier: Modifier = Modifier
 ) {
-    BoxWithConstraints(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(LIFELINE_HEIGHT)
-            .padding(horizontal = 2.dp, vertical = 2.dp)
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center
     ) {
-        val totalWidth = maxWidth
-        val cellWidth = if (totalLaps > 0) totalWidth / totalLaps else totalWidth
-        val photoSize = 16.dp
-        val photoRadius = photoSize / 2
-
-        Box(
-            modifier = Modifier
+        BoxWithConstraints(
+            modifier = modifier
                 .fillMaxWidth()
-                .height(2.dp)
-                .align(Alignment.CenterStart)
-                .background(AppColors.GraySubtle, RoundedCornerShape(2.dp))
-        )
+                .height(LIFELINE_HEIGHT)
+                .padding(horizontal = 2.dp, vertical = 2.dp)
+        ) {
+            val cellWidth = if (totalLaps > 0) maxWidth / totalLaps else maxWidth
+            val photoSize = 24.dp
+            val photoRadius = photoSize / 2
 
-        if (completedLaps > 0) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth(completedLaps.toFloat() / totalLaps)
+                    .fillMaxWidth()
                     .height(2.dp)
                     .align(Alignment.CenterStart)
-                    .background(AppColors.Yellow, RoundedCornerShape(2.dp))
+                    .background(AppColors.GraySubtle, RoundedCornerShape(2.dp))
+            )
+
+            if (completedLaps > 0) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(completedLaps.toFloat() / totalLaps)
+                        .height(2.dp)
+                        .align(Alignment.CenterStart)
+                        .background(AppColors.Yellow, RoundedCornerShape(2.dp))
+                )
+            }
+
+            val photoOffsetX = if (completedLaps > 0) {
+                val raw = cellWidth * (completedLaps - 0.5f) - photoRadius
+                raw.coerceIn(0.dp, maxWidth - photoSize)
+            } else {
+                0.dp
+            }
+
+            Image(
+                painter = painterResource(runner.photoResId),
+                contentDescription = runner.firstName,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(photoSize)
+                    .offset(x = photoOffsetX)
+                    .align(Alignment.CenterStart)
+                    .clip(CircleShape)
+                    .background(AppColors.SurfaceMid)
+                    .border(
+                        width = 1.dp,
+                        color = if (completedLaps > 0) AppColors.Yellow else AppColors.GraySubtle,
+                        shape = CircleShape
+                    )
             )
         }
-
-        val photoOffsetX = if (completedLaps > 0) {
-            val raw = cellWidth * (completedLaps - 0.5f) - photoRadius
-            raw.coerceIn(0.dp, totalWidth - photoSize)
-        } else {
-            0.dp
-        }
-
-        Image(
-            painter = painterResource(runner.photoResId),
-            contentDescription = runner.firstName,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(photoSize)
-                .offset(x = photoOffsetX)
-                .align(Alignment.CenterStart)
-                .clip(CircleShape)
-                .background(AppColors.SurfaceMid)
-                .border(
-                    width = 1.dp,
-                    color = if (completedLaps > 0) AppColors.Yellow else AppColors.GraySubtle,
-                    shape = CircleShape
-                )
-        )
     }
 }
