@@ -6,7 +6,7 @@ import com.athimue.backyard.core.database.entity.LapResultEntity
 import com.athimue.backyard.core.database.entity.RunnerEntity
 import com.athimue.backyard.feature.race.impl.domain.model.LapResult
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
-import com.athimue.backyard.feature.race.impl.domain.model.Runner
+import com.athimue.domain.model.Runner
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -51,11 +51,6 @@ class ResultsRepositoryImpl @Inject constructor(
     override suspend fun removeLapResult(runnerId: Int, lapNumber: Int) =
         withContext(Dispatchers.IO) { lapResultDao.delete(runnerId, lapNumber) }
 
-    override suspend fun addRunner(firstName: String) = withContext(Dispatchers.IO) {
-        val nextId = (runnerDao.getMaxId() ?: 0) + 1
-        runnerDao.insert(RunnerEntity(dossardId = nextId, firstName = firstName))
-    }
-
     override suspend fun removeRunner(runnerId: Int) =
         withContext(Dispatchers.IO) { runnerDao.deleteById(runnerId) }
 
@@ -70,7 +65,7 @@ class ResultsRepositoryImpl @Inject constructor(
 
     private fun RunnerEntity.toDomain() = Runner(
         dossardId = dossardId,
-        firstName = firstName,
+        firstName = firstName
     )
 
     private fun LapResultEntity.toDomain() = LapResult(

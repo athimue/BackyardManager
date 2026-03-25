@@ -1,6 +1,6 @@
-package com.athimue.backyard.feature.race.impl.domain.model
+package com.athimue.domain.model
 
 data class Runner(
     val dossardId: Int,
-    val firstName: String,
+    val firstName: String
 )

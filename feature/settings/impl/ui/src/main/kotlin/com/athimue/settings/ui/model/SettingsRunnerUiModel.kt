@@ -1,7 +1,7 @@
 package com.athimue.settings.ui.model
 
 import androidx.compose.runtime.Immutable
-import com.athimue.backyard.feature.race.impl.domain.model.Runner
+import com.athimue.domain.model.Runner
 
 @Immutable
 data class SettingsRunnerUiModel(

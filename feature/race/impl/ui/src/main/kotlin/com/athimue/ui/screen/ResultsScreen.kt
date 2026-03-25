@@ -70,7 +70,7 @@ import com.athimue.backyard.core.theme.R as CoreR
 
 private val RUNNER_CELL_WIDTH = 140.dp
 private val LAP_CELL_HEIGHT = 24.dp
-private val LIFELINE_HEIGHT = 20.dp
+private val LIFELINE_HEIGHT = 30.dp
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -466,7 +466,7 @@ private fun RunnerLifeLine(
                 .padding(horizontal = 2.dp, vertical = 2.dp)
         ) {
             val cellWidth = if (totalLaps > 0) maxWidth / totalLaps else maxWidth
-            val photoSize = 24.dp
+            val photoSize = 200.dp
             val photoRadius = photoSize / 2
 
             Box(
@@ -497,18 +497,11 @@ private fun RunnerLifeLine(
             Image(
                 painter = painterResource(runner.photoResId),
                 contentDescription = runner.firstName,
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(photoSize)
                     .offset(x = photoOffsetX)
                     .align(Alignment.CenterStart)
-                    .clip(CircleShape)
-                    .background(AppColors.SurfaceMid)
-                    .border(
-                        width = 1.dp,
-                        color = if (completedLaps > 0) AppColors.Yellow else AppColors.GraySubtle,
-                        shape = CircleShape
-                    )
             )
         }
     }
