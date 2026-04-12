@@ -16,13 +16,19 @@ fun Runner.toRunnerUiModel() = RunnerUiModel(
     dossardId = dossardId,
     firstName = firstName,
     photoResId = when(firstName) {
-        "Aubin" -> R.drawable.aubin
-        "Corentin" -> R.drawable.corentin
-        "Kilian" -> R.drawable.kilian
-        "Louis" -> R.drawable.louis
-        "Marc" -> R.drawable.marc
-        "Mathieu" -> R.drawable.mathieu
+        "Killian" -> R.drawable.kilian
+        "Brice" -> R.drawable.brice
+        "Theo" -> R.drawable.theo
+        "Hugo" -> R.drawable.hugo
         "Tristan" -> R.drawable.tristan
+        "Marc" -> R.drawable.marc
+        "Corentin" -> R.drawable.corentin
+        "Louis" -> R.drawable.louis
+        "Thibaut" -> R.drawable.thibaut
+        "Luca" -> R.drawable.luca
+        "Aubin" -> R.drawable.aubin
+        "Mathieu" -> R.drawable.mathieu
+        "Quentin" -> R.drawable.quentin
         else -> R.drawable.mathieu
     },
 )

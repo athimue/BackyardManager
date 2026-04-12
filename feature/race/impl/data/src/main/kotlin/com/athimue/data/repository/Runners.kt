@@ -4,18 +4,18 @@ import com.athimue.backyard.core.database.entity.RunnerEntity
 
 object DefaultRunners {
     val list = listOf(
-        RunnerEntity(1, "Brice"),
-        RunnerEntity(2, "Thibaud"),
-        RunnerEntity(3, "Killian"),
-        RunnerEntity(4, "Corentin"),
-        RunnerEntity(5, "Aubin"),
-        RunnerEntity(6, "Theo"),
-        RunnerEntity(7, "Louis"),
-        RunnerEntity(8, "Marc"),
-        RunnerEntity(9, "Hugo"),
-        RunnerEntity(10, "Mathieu"),
-        RunnerEntity(11, "Tristan"),
-        RunnerEntity(12, "Remi"),
-        RunnerEntity(13, "Luca"),
+        RunnerEntity(1, "Killian"),
+        RunnerEntity(2, "Brice"),
+        RunnerEntity(3, "Theo"),
+        RunnerEntity(4, "Hugo"),
+        RunnerEntity(5, "Tristan"),
+        RunnerEntity(6, "Marc"),
+        RunnerEntity(7, "Corentin"),
+        RunnerEntity(8, "Louis"),
+        RunnerEntity(9, "Thibaut"),
+        RunnerEntity(10, "Luca"),
+        RunnerEntity(11, "Aubin"),
+        RunnerEntity(12, "Mathieu"),
+        RunnerEntity(13, "Quentin"),
     )
 }

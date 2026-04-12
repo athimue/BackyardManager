@@ -529,7 +529,6 @@ private fun RunnerLifeLine(
                     .size(photoSize)
                     .offset(x = photoOffsetX, y = (bumpOffsetY - lineBottomPadding.value).dp)
                     .align(Alignment.BottomStart)
-                    .clip(CircleShape)
             )
         }
     }
