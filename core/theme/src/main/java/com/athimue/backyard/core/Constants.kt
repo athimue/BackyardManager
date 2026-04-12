@@ -1,6 +1,6 @@
 package com.athimue.backyard.core
 
-const val LAP_DURATION_SECONDS = 3600
+const val LAP_DURATION_SECONDS = 60
 const val LAP_WARNING_SECONDS = 30
 
 const val EVENT_NAME = "BACKYARD DU GARAGE"

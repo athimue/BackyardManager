@@ -41,7 +41,7 @@ data class TimerUiState(
 }
 
 private fun formatTime(totalSeconds: Int): String {
-    val minutes = (totalSeconds % 3600) / 60
+    val minutes = (totalSeconds % LAP_DURATION_SECONDS) / 60
     val secs = totalSeconds % 60
     return "%02d:%02d".format(minutes, secs)
 }

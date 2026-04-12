@@ -1,6 +1,7 @@
 package com.athimue.backyard.feature.countdown.impl.ui.model
 
 import androidx.compose.runtime.Immutable
+import com.athimue.backyard.core.LAP_DURATION_SECONDS
 
 @Immutable
 data class CountdownUiState(
@@ -12,8 +13,8 @@ data class CountdownUiState(
 ) {
     val countdownFormatted: String
         get() {
-            val h = countdownSeconds / 3600
-            val m = (countdownSeconds % 3600) / 60
+            val h = countdownSeconds / LAP_DURATION_SECONDS
+            val m = (countdownSeconds % LAP_DURATION_SECONDS) / 60
             val s = countdownSeconds % 60
             return "%02d:%02d:%02d".format(h, m, s)
         }

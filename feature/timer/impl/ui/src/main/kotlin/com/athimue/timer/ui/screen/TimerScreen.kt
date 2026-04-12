@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
@@ -62,7 +63,7 @@ fun TimerScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(flashColor)
-            .padding(horizontal = 32.dp, vertical = 8.dp)
+            .padding(horizontal = 32.dp, vertical = 2.dp)
     ) {
         // ── Header ──────────────────────────────────────────────────────────
         Row(
@@ -133,7 +134,7 @@ fun TimerScreen(
                     fontWeight = AppTypography.semiBold,
                     letterSpacing = 2.sp
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = uiState.remainingTimeFormatted,
                     color = AppColors.White,
@@ -193,14 +194,15 @@ fun TimerScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 16.dp),
-            verticalArrangement = Arrangement.Bottom
+                .padding(bottom = 2.dp),
+            verticalArrangement = Arrangement.Center
         ) {
             // ── Progress bar ─────────────────────────────────────────────────────
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 20.dp, horizontal = 16.dp),
+                    .weight(1f)
+                    .padding(vertical = 4.dp, horizontal = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 ProgressBar(

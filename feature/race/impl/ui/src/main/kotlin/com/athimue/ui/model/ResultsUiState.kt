@@ -1,6 +1,7 @@
 package com.athimue.ui.model
 
 import androidx.compose.runtime.Immutable
+import com.athimue.backyard.core.LAP_DURATION_SECONDS
 
 private const val MAX_LAPS = 15
 
@@ -55,7 +56,7 @@ private fun parseTimeToSeconds(time: String): Int {
     val parts = time.split(":")
     return when (parts.size) {
         2 -> parts[0].toIntOrNull()?.times(60).orZero() + parts[1].toIntOrNull().orZero()
-        3 -> parts[0].toIntOrNull()?.times(3600).orZero() +
+        3 -> parts[0].toIntOrNull()?.times(LAP_DURATION_SECONDS).orZero() +
                 parts[1].toIntOrNull()?.times(60).orZero() +
                 parts[2].toIntOrNull().orZero()
         else -> Int.MAX_VALUE
