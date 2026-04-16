@@ -25,7 +25,7 @@ data class TimerUiState(
         get() = formatTime(remainingSecondsInLap)
 
     val remainingSecondsFormatted: String
-        get() = "%02d".format(remainingSecondsInLap % 60)
+        get() = (remainingSecondsInLap % 60).toString()
 
     val lapProgress: Float
         get() = elapsedSecondsInLap.toFloat() / LAP_DURATION_SECONDS

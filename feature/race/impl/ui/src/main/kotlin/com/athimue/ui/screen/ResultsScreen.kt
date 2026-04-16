@@ -7,6 +7,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -61,6 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
@@ -70,6 +73,8 @@ import com.athimue.backyard.core.EVENT_NAME
 import com.athimue.backyard.core.EVENT_SUBTITLE
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
+import com.athimue.backyard.feature.race.impl.ui.R
+import com.athimue.ui.model.LapResultUiModel
 import com.athimue.ui.model.LapStatusUiModel
 import com.athimue.ui.model.RunnerUiModel
 import com.athimue.ui.viewmodel.ResultsViewModel
@@ -78,6 +83,13 @@ import com.athimue.backyard.core.theme.R as CoreR
 private val RUNNER_CELL_WIDTH = 140.dp
 private val LAP_CELL_HEIGHT = 24.dp
 private val LIFELINE_HEIGHT = 36.dp
+
+/** Tour d’élimination DNF (temps « DNF » ou vide) : orange ; les cases ✕ suivantes restent rouges. */
+private fun isDnfEliminationCell(lapResult: LapResultUiModel?): Boolean {
+    if (lapResult?.status != LapStatusUiModel.ELIMINATED) return false
+    val t = lapResult.time.trim()
+    return t.isEmpty() || t.equals("DNF", ignoreCase = true)
+}
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -251,6 +263,7 @@ internal fun ResultsScreen(
                                 isCross -> AppColors.RedFilled
                                 isFocused -> AppColors.Yellow
                                 lapResult?.status == LapStatusUiModel.COMPLETED -> AppColors.GreenFilled
+                                isDnfEliminationCell(lapResult) -> AppColors.OrangeFilled
                                 lapResult?.status == LapStatusUiModel.ELIMINATED -> AppColors.RedFilled
                                 else -> AppColors.SurfaceMid
                             }
@@ -258,6 +271,7 @@ internal fun ResultsScreen(
                                 isFocused -> AppColors.Yellow
                                 isCross -> AppColors.RedFilledBorder
                                 lapResult?.status == LapStatusUiModel.COMPLETED -> AppColors.GreenFilledBorder
+                                isDnfEliminationCell(lapResult) -> AppColors.OrangeFilledBorder
                                 lapResult?.status == LapStatusUiModel.ELIMINATED -> AppColors.RedFilledBorder
                                 else -> AppColors.GraySubtle
                             }
@@ -332,7 +346,8 @@ internal fun ResultsScreen(
                         modifier = Modifier.padding(top = 4.dp),
                         runner = runner,
                         completedLaps = uiState.completedLapsFor(runner.dossardId),
-                        totalLaps = uiState.laps.size
+                        totalLaps = uiState.laps.size,
+                        isEliminated = uiState.eliminationLapFor(runner.dossardId) != null
                     )
                 }
             }
@@ -460,24 +475,53 @@ private fun RunnerLifeLine(
     runner: RunnerUiModel,
     completedLaps: Int,
     totalLaps: Int,
+    isEliminated: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val infiniteTransition = rememberInfiniteTransition(label = "headBump")
-    val bumpOffsetY by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 0f,
-        animationSpec = infiniteRepeatable(
-            animation = keyframes {
-                durationMillis = 900
-                0f at 0 using LinearEasing
-                -10f at 250 using FastOutSlowInEasing
-                0f at 500 using FastOutSlowInEasing
-                0f at 900 using LinearEasing
-            },
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "bumpOffsetY"
-    )
+    val runOffsetX = if (isEliminated) {
+        0f
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "runnerStrideX")
+        infiniteTransition.animateFloat(
+            initialValue = -1.5f,
+            targetValue = 1.5f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 180, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "runner_stride_x"
+        ).value
+    }
+
+    val runOffsetY = if (isEliminated) {
+        0f
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "runnerStrideY")
+        infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = -4.5f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 180, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "runner_stride_y"
+        ).value
+    }
+
+    val runTilt = if (isEliminated) {
+        90f
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "runnerTilt")
+        infiniteTransition.animateFloat(
+            initialValue = -6f,
+            targetValue = 6f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(durationMillis = 220, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "runner_tilt"
+        ).value
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -521,15 +565,58 @@ private fun RunnerLifeLine(
                 0.dp
             }
 
-            Image(
-                painter = painterResource(runner.photoResId),
-                contentDescription = runner.firstName,
-                contentScale = ContentScale.Crop,
+            Box(
                 modifier = Modifier
                     .size(photoSize)
-                    .offset(x = photoOffsetX, y = (bumpOffsetY - lineBottomPadding.value).dp)
+                    .offset(
+                        x = photoOffsetX + runOffsetX.dp,
+                        y = (runOffsetY - lineBottomPadding.value).dp
+                    )
                     .align(Alignment.BottomStart)
-            )
+            ) {
+                Image(
+                    painter = painterResource(runner.photoResId),
+                    contentDescription = runner.firstName,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .matchParentSize()
+                        .graphicsLayer {
+                            rotationZ = runTilt
+                        }
+                )
+
+                if (isEliminated) {
+                    val sleepTransition = rememberInfiniteTransition(label = "sleepZzz")
+                    val zzzOffsetY by sleepTransition.animateFloat(
+                        initialValue = 2f,
+                        targetValue = -4f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 900, easing = FastOutSlowInEasing),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "zzz_float_y"
+                    )
+                    val zzzAlpha by sleepTransition.animateFloat(
+                        initialValue = 0.55f,
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 900, easing = LinearEasing),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                        label = "zzz_alpha"
+                    )
+
+                    Image(
+                        painter = painterResource(R.drawable.zzz),
+                        contentDescription = "Sleeping",
+                        modifier = Modifier
+                            .size(14.dp)
+                            .align(Alignment.TopEnd)
+                            .offset(x = 4.dp, y = (-4).dp + zzzOffsetY.dp)
+                            .alpha(zzzAlpha)
+                    )
+                }
+            }
         }
     }
 }

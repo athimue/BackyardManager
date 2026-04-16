@@ -35,8 +35,19 @@ class ResultsViewModel @Inject constructor(
             lapResults.map { it.toLapResultUiModel() }.groupBy { it.runnerId }
                 .mapValues { (_, list) -> list.associateBy { it.lapNumber } }
         val currentLap = seconds / LAP_DURATION_SECONDS + 1
+        val eliminatedRunnerIds = lapResults
+            .filter { it.status == LapStatus.ELIMINATED }
+            .map { it.runnerId }
+            .toSet()
         val sortedRunners = runners.map { it.toRunnerUiModel() }.sortedWith(
             Comparator { a, b ->
+                val aEliminated = a.dossardId in eliminatedRunnerIds
+                val bEliminated = b.dossardId in eliminatedRunnerIds
+
+                if (aEliminated != bEliminated) {
+                    return@Comparator if (aEliminated) 1 else -1
+                }
+
                 val timeA = lapResults.find {
                     it.runnerId == a.dossardId && it.lapNumber == currentLap && it.status == LapStatus.COMPLETED
                 }?.time

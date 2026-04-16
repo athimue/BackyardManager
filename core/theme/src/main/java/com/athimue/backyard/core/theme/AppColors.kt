@@ -16,4 +16,6 @@ object AppColors {
     val GreenFilledBorder = Color(0xFF43A047)
     val RedFilled = Color(0xFF5D1A1A)
     val RedFilledBorder = Color(0xFFEF5350)
+    val OrangeFilled = Color(0xFF6D4018)
+    val OrangeFilledBorder = Color(0xFFFFA726)
 }

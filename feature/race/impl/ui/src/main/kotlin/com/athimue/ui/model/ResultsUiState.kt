@@ -2,8 +2,8 @@ package com.athimue.ui.model
 
 import androidx.compose.runtime.Immutable
 import com.athimue.backyard.core.LAP_DURATION_SECONDS
-
-private const val MAX_LAPS = 15
+import com.athimue.backyard.core.RESULTS_MAX_LAPS
+import com.athimue.backyard.core.SECONDS_PER_MINUTE
 
 @Immutable
 data class ResultsUiState(
@@ -14,7 +14,7 @@ data class ResultsUiState(
     val laps: List<Int>
         get() {
             val highestResultLap = results.values.flatMap { it.keys }.maxOrNull() ?: 0
-            val maxLap = maxOf(currentLap + 1, highestResultLap + 1, 5).coerceAtMost(MAX_LAPS)
+            val maxLap = maxOf(currentLap + 1, highestResultLap + 1, 5).coerceAtMost(RESULTS_MAX_LAPS)
             return (1..maxLap).toList()
         }
 
@@ -55,9 +55,10 @@ data class ResultsUiState(
 private fun parseTimeToSeconds(time: String): Int {
     val parts = time.split(":")
     return when (parts.size) {
-        2 -> parts[0].toIntOrNull()?.times(60).orZero() + parts[1].toIntOrNull().orZero()
+        2 -> parts[0].toIntOrNull()?.times(SECONDS_PER_MINUTE.toInt()).orZero() +
+                parts[1].toIntOrNull().orZero()
         3 -> parts[0].toIntOrNull()?.times(LAP_DURATION_SECONDS).orZero() +
-                parts[1].toIntOrNull()?.times(60).orZero() +
+                parts[1].toIntOrNull()?.times(SECONDS_PER_MINUTE.toInt()).orZero() +
                 parts[2].toIntOrNull().orZero()
         else -> Int.MAX_VALUE
     }
