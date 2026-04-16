@@ -11,11 +11,9 @@ object DefaultRunners {
         RunnerEntity(5, "Tristan"),
         RunnerEntity(6, "Marc"),
         RunnerEntity(7, "Corentin"),
-        RunnerEntity(8, "Louis"),
         RunnerEntity(9, "Thibaut"),
         RunnerEntity(10, "Luca"),
         RunnerEntity(11, "Aubin"),
         RunnerEntity(12, "Mathieu"),
-        RunnerEntity(13, "Quentin"),
     )
 }

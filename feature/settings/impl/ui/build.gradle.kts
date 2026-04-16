@@ -29,6 +29,7 @@ android {
 
 dependencies {
     implementation(project(":core:theme"))
+    implementation(project(":core:audio"))
     implementation(project(":feature:settings:api"))
     implementation(project(":feature:race:api"))
     implementation(project(":feature:race:impl:domain"))

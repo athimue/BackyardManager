@@ -64,7 +64,7 @@ fun SettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "⚙  Settings",
+                        text = "⚙  Réglages",
                         fontSize = AppTypography.titleSize,
                         fontFamily = AppTypography.fontFamily,
                         fontWeight = AppTypography.bold,
@@ -77,7 +77,7 @@ fun SettingsScreen(
                             focusedContainerColor = AppColors.Yellow
                         )
                     ) {
-                        Text("← Back", fontFamily = AppTypography.fontFamily)
+                        Text("← Retour", fontFamily = AppTypography.fontFamily)
                     }
                 }
 
@@ -92,7 +92,7 @@ fun SettingsScreen(
 
             // ── Start time ──────────────────────────────────────────────────────
             item {
-                SectionTitle("Race Start Time")
+                SectionTitle("Heure de départ")
                 Spacer(Modifier.height(12.dp))
 
                 Row(
@@ -100,7 +100,7 @@ fun SettingsScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     // Hours
-                    Text("Hours:", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
+                    Text("Heures :", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
                     StepButton("-") { viewModel.decrementStartHour() }
                     Box(
                         modifier = Modifier
@@ -122,7 +122,7 @@ fun SettingsScreen(
                     Spacer(Modifier.width(16.dp))
 
                     // Minutes
-                    Text("Minutes:", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
+                    Text("Minutes :", color = AppColors.Gray, fontFamily = AppTypography.fontFamily)
                     StepButton("-") { viewModel.decrementStartMinute() }
                     Box(
                         modifier = Modifier
@@ -159,7 +159,7 @@ fun SettingsScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    SectionTitle("Runners (${uiState.runners.size})")
+                    SectionTitle("Coureurs (${uiState.runners.size})")
                     Button(
                         onClick = { viewModel.restoreDefaultRunners() },
                         colors = ButtonDefaults.colors(
@@ -168,7 +168,7 @@ fun SettingsScreen(
                         )
                     ) {
                         Text(
-                            "↺  Restore defaults",
+                            "↺  Restaurer",
                             fontFamily = AppTypography.fontFamily,
                             fontSize = AppTypography.labelSize
                         )
@@ -199,7 +199,7 @@ fun SettingsScreen(
                         )
                     ) {
                         Text(
-                            "✕ Remove",
+                            "✕ Retirer",
                             fontFamily = AppTypography.fontFamily,
                             fontSize = AppTypography.labelSize
                         )
@@ -207,9 +207,9 @@ fun SettingsScreen(
                 }
             }
 
-            // ── Danger zone ──────────────────────────────────────────────────────
+            // ── Zone dangereuse ──────────────────────────────────────────────────
             item {
-                SectionTitle("Danger Zone")
+                SectionTitle("Zone dangereuse")
                 Spacer(Modifier.height(12.dp))
                 Button(
                     onClick = { viewModel.resetRace() },
@@ -221,7 +221,7 @@ fun SettingsScreen(
                     )
                 ) {
                     Text(
-                        text = "🔄  Reset race (clears all results)",
+                        text = "🔄  Réinitialiser la course (efface tous les résultats)",
                         fontSize = AppTypography.bodyMediumSize,
                         fontFamily = AppTypography.fontFamily,
                         fontWeight = AppTypography.bold

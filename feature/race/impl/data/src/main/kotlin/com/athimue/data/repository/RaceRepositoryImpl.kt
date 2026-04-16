@@ -38,19 +38,24 @@ class RaceRepositoryImpl @Inject constructor(
         }
 
     override fun observeStartHour(): Flow<Int> =
-        raceDao.observe().map { it?.startHour ?: 9 }
+        raceDao.observe().map { it?.startHour ?: 20 }
 
     override fun observeStartMinute(): Flow<Int> =
         raceDao.observe().map { it?.startMinute ?: 0 }
 
     override suspend fun getRaceStartMillis(): Long = withContext(Dispatchers.IO) {
         val entity = raceDao.get() ?: RaceEntity()
-        Calendar.getInstance().apply {
+        val cal = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, entity.startHour)
             set(Calendar.MINUTE, entity.startMinute)
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
-        }.timeInMillis
+        }
+        // Si l'heure configurée est plus de 12h dans le passé, on suppose que c'est pour demain.
+        if (cal.timeInMillis < System.currentTimeMillis() - 12 * 3_600_000L) {
+            cal.add(Calendar.DAY_OF_MONTH, 1)
+        }
+        cal.timeInMillis
     }
 
     override suspend fun getActualStartMillis(): Long = withContext(Dispatchers.IO) {

@@ -152,7 +152,7 @@ internal fun CountdownScreen(
                 )
             ) {
                 Text(
-                    text = "▶  Start now",
+                    text = "▶  Démarrer maintenant",
                     fontSize = AppTypography.bodyMediumSize,
                     fontFamily = AppTypography.fontFamily,
                     fontWeight = AppTypography.semiBold
@@ -169,7 +169,7 @@ internal fun CountdownScreen(
                 )
             ) {
                 Text(
-                    text = "⚙  Settings",
+                    text = "⚙  Réglages",
                     fontSize = AppTypography.bodyMediumSize,
                     fontFamily = AppTypography.fontFamily,
                     fontWeight = AppTypography.semiBold

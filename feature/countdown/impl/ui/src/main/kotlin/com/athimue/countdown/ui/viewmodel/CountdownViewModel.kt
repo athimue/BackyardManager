@@ -2,6 +2,9 @@ package com.athimue.backyard.feature.countdown.impl.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.athimue.backyard.core.MILLIS_PER_SECOND
+import com.athimue.backyard.core.RACE_AUTO_START_GRACE_SECONDS
+import com.athimue.backyard.core.TIME_FORMAT_HH_MM_SS
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.GetRaceStartMillis
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveRaceState
 import com.athimue.backyard.feature.countdown.impl.domain.usecase.ObserveStartHour
@@ -59,12 +62,12 @@ class CountdownViewModel @Inject constructor(
             while (isActive) {
                 val scheduledMillis = getRaceStartMillis()
                 val now = System.currentTimeMillis()
-                val diffSeconds = (scheduledMillis - now) / 1000
+                val diffSeconds = (scheduledMillis - now) / MILLIS_PER_SECOND
 
                 // Auto-start only if the scheduled time passed less than 5 minutes ago.
                 // A large negative diffSeconds means the configured time is way in the past
                 // (e.g. after a race reset mid-day), which must not trigger an immediate re-start.
-                if (diffSeconds in -300L..0L && _uiState.value.raceState == RaceStateUiModel.COUNTDOWN) {
+                if (diffSeconds in -RACE_AUTO_START_GRACE_SECONDS..0L && _uiState.value.raceState == RaceStateUiModel.COUNTDOWN) {
                     setActualStartMillis(scheduledMillis)
                     setRaceState(RaceState.IN_PROGRESS)
                 }
@@ -75,7 +78,7 @@ class CountdownViewModel @Inject constructor(
                         currentTime = formatCurrentTime()
                     )
                 }
-                delay(1_000)
+                delay(MILLIS_PER_SECOND)
             }
         }
     }
@@ -91,7 +94,7 @@ class CountdownViewModel @Inject constructor(
 
 private fun formatCurrentTime(): String {
     val c = java.util.Calendar.getInstance()
-    return "%02d:%02d:%02d".format(
+    return TIME_FORMAT_HH_MM_SS.format(
         c.get(java.util.Calendar.HOUR_OF_DAY),
         c.get(java.util.Calendar.MINUTE),
         c.get(java.util.Calendar.SECOND)

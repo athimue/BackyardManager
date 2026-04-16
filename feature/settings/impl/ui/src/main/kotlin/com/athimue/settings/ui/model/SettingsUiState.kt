@@ -5,7 +5,7 @@ import com.athimue.backyard.feature.race.api.model.RaceState
 
 @Immutable
 data class SettingsUiState(
-    val startHour: Int = 9,
+    val startHour: Int = 20,
     val startMinute: Int = 0,
     val runners: List<SettingsRunnerUiModel> = emptyList(),
     val raceState: RaceState = RaceState.COUNTDOWN

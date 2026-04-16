@@ -2,6 +2,7 @@ package com.athimue.settings.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.athimue.backyard.core.audio.SoundManager
 import com.athimue.backyard.feature.race.api.model.RaceState
 import com.athimue.settings.ui.model.SettingsRunnerUiModel
 import com.athimue.settings.ui.model.SettingsUiState
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val raceRepository: RaceRepository,
-    private val resultsRepository: ResultsRepository
+    private val resultsRepository: ResultsRepository,
+    private val soundManager: SoundManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -80,6 +82,7 @@ class SettingsViewModel @Inject constructor(
             resultsRepository.clearAllResults()
             raceRepository.setActualStartMillis(0L)
             raceRepository.setRaceState(RaceState.COUNTDOWN)
+            soundManager.reset()
             _resetDone.update { true }
         }
     }
