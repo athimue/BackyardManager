@@ -23,6 +23,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:theme"))
     implementation("com.google.dagger:hilt-android:2.52")
     kapt("com.google.dagger:hilt-android-compiler:2.52")
 }
