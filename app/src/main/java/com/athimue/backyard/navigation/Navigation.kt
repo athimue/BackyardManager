@@ -45,6 +45,7 @@ fun BackyardNavHost(
                 navController = navController,
                 onShowResults = { navController.navigate(RaceRoutes.RESULTS) },
                 onOpenSettings = { navController.navigate(SettingsRoutes.SETTINGS) },
+                onRaceFinished = { navController.navigate(RaceRoutes.FINISH) },
             )
         }
 

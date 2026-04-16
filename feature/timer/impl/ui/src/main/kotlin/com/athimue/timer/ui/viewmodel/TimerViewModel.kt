@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.core.LAP_DURATION_SECONDS
 import com.athimue.backyard.core.LAP_WARNING_SECONDS
 import com.athimue.backyard.core.audio.SoundManager
+import com.athimue.backyard.feature.race.api.model.RaceState
 import com.athimue.backyard.feature.race.impl.domain.model.LapStatus
 import com.athimue.timer.ui.model.TimerUiState
 import com.athimue.timer.ui.model.formatCurrentTime
@@ -13,8 +14,11 @@ import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepositor
 import com.athimue.backyard.feature.race.impl.domain.repository.TimerRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -34,8 +38,13 @@ class TimerViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(TimerUiState())
     val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
 
+    private val _finishEvent = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val finishEvent: SharedFlow<Unit> = _finishEvent.asSharedFlow()
+
     private var previousLap = 0
     private var warningPlayedForLap = 0
+    private var hasSeenActiveRunners = false
+    private var finishEmitted = false
 
     init {
         viewModelScope.launch { observeActiveRunnersCount() }
@@ -47,10 +56,17 @@ class TimerViewModel @Inject constructor(
             resultsRepository.observeRunners(),
             resultsRepository.observeLapResults()
         ) { runners, lapResults ->
-            runners.count { runner ->
+            val active = runners.count { runner ->
                 lapResults.none { it.runnerId == runner.dossardId && it.status == LapStatus.ELIMINATED }
             }
-        }.collect { active ->
+            Pair(runners.size, active)
+        }.collect { (total, active) ->
+            if (active > 0) hasSeenActiveRunners = true
+            if (total > 0 && active == 0 && hasSeenActiveRunners && !finishEmitted) {
+                finishEmitted = true
+                _finishEvent.tryEmit(Unit)
+                viewModelScope.launch { raceRepository.setRaceState(RaceState.FINISHED) }
+            }
             _uiState.update { it.copy(activeRunnersCount = active) }
         }
     }
@@ -93,6 +109,8 @@ class TimerViewModel @Inject constructor(
                     soundManager.playEndLapWarning()
                     warningPlayedForLap = currentLap
                 }
+
+                soundManager.updateLapFunAudio(remainingSecondsInLap = remaining, currentLap = currentLap)
 
                 _uiState.update { it.copy(seconds = elapsed, currentTime = formatCurrentTime()) }
                 timerRepository.updateSeconds(elapsed)

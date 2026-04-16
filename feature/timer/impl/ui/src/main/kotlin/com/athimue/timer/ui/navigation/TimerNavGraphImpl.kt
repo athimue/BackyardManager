@@ -14,11 +14,13 @@ class TimerNavGraphImpl @Inject constructor() : TimerFeatureApi {
         navController: NavController,
         onShowResults: () -> Unit,
         onOpenSettings: () -> Unit,
+        onRaceFinished: () -> Unit,
     ) {
         composable(TimerRoutes.TIMER) {
             TimerScreen(
                 onShowResults = onShowResults,
                 onOpenSettings = onOpenSettings,
+                onRaceFinished = onRaceFinished,
             )
         }
     }

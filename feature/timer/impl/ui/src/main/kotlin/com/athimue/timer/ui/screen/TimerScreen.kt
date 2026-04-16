@@ -1,6 +1,15 @@
 package com.athimue.timer.ui.screen
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,13 +29,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
@@ -41,22 +56,48 @@ import com.athimue.backyard.core.EVENT_NAME
 import com.athimue.backyard.core.EVENT_SUBTITLE
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
+import com.athimue.timer.ui.model.TimerUiState
 import com.athimue.timer.ui.viewmodel.TimerViewModel
 import com.athimue.backyard.core.theme.R as CoreR
+import kotlinx.coroutines.delay
 
 @Composable
 fun TimerScreen(
     viewModel: TimerViewModel = hiltViewModel(),
     onShowResults: () -> Unit = {},
-    onOpenSettings: () -> Unit = {}
+    onOpenSettings: () -> Unit = {},
+    onRaceFinished: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // Flash background orange briefly when a new lap starts
+    LaunchedEffect(Unit) {
+        viewModel.finishEvent.collect { onRaceFinished() }
+    }
+
+    // Flash : quelques clignotements jaune → assombri → jaune, puis retour au noir (nouveau tour).
+    var flashColorTarget by remember { mutableStateOf(AppColors.Black) }
+    LaunchedEffect(uiState.lapJustChanged) {
+        if (!uiState.lapJustChanged) {
+            flashColorTarget = AppColors.Black
+            return@LaunchedEffect
+        }
+        val yellow = AppColors.Yellow
+        val dip = Color(0xFF121000)
+        repeat(3) {
+            flashColorTarget = yellow
+            delay(150)
+            flashColorTarget = dip
+            delay(150)
+        }
+        flashColorTarget = yellow
+        delay(120)
+        flashColorTarget = AppColors.Black
+    }
+
     val flashColor by animateColorAsState(
-        targetValue = if (uiState.lapJustChanged) AppColors.Yellow else AppColors.Black,
-        animationSpec = tween(400),
-        label = "lap_flash"
+        targetValue = flashColorTarget,
+        animationSpec = tween(durationMillis = 85, easing = LinearEasing),
+        label = "lap_flash",
     )
 
     Column(
@@ -214,15 +255,7 @@ fun TimerScreen(
                 )
 
                 if (uiState.showEndLapCountdown) {
-                    Text(
-                        text = uiState.remainingSecondsFormatted,
-                        color = AppColors.White,
-                        fontSize = AppTypography.chronoSize,
-                        fontWeight = AppTypography.bold,
-                        maxLines = 1,
-                        textAlign = TextAlign.Center,
-                        fontFamily = AppTypography.fontFamily,
-                    )
+                    EndLapCountdownText(uiState = uiState)
                 }
             }
 
@@ -276,6 +309,57 @@ fun TimerScreen(
             }
         }
     }
+}
+
+@Composable
+private fun EndLapCountdownText(uiState: TimerUiState) {
+    var bounceTarget by remember { mutableFloatStateOf(1f) }
+    LaunchedEffect(uiState.remainingSecondsInLap) {
+        if (!uiState.showEndLapCountdown) {
+            bounceTarget = 1f
+            return@LaunchedEffect
+        }
+        bounceTarget = 1.26f
+        delay(70)
+        bounceTarget = 1f
+    }
+
+    val tickScale by animateFloatAsState(
+        targetValue = bounceTarget,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessMediumLow,
+        ),
+        label = "end_lap_tick_bounce",
+    )
+
+    val pulse = rememberInfiniteTransition(label = "end_lap_pulse")
+    val ambientScale by pulse.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.055f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(420, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "end_lap_ambient",
+    )
+
+    val combinedScale = tickScale * ambientScale
+
+    Text(
+        text = uiState.remainingSecondsFormatted,
+        modifier = Modifier.graphicsLayer {
+            scaleX = combinedScale
+            scaleY = combinedScale
+            transformOrigin = TransformOrigin.Center
+        },
+        color = AppColors.White,
+        fontSize = AppTypography.chronoSize,
+        fontWeight = AppTypography.bold,
+        maxLines = 1,
+        textAlign = TextAlign.Center,
+        fontFamily = AppTypography.fontFamily,
+    )
 }
 
 @Composable

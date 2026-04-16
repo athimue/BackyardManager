@@ -8,5 +8,6 @@ interface TimerFeatureApi {
         navController: NavController,
         onShowResults: () -> Unit,
         onOpenSettings: () -> Unit,
+        onRaceFinished: () -> Unit,
     )
 }
