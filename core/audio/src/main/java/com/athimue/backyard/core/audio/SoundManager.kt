@@ -9,6 +9,7 @@ import com.athimue.backyard.core.AUDIO_WARNING_REPEAT_DELAY_MS
 import com.athimue.backyard.core.AUDIO_WARNING_TONE_DURATION_MS
 import com.athimue.backyard.core.AUDIO_WARNING_VOLUME
 import com.athimue.backyard.core.LAP_FUN_FINAL_SECONDS
+import com.athimue.backyard.core.LAP_FUN_MINUTE7_SECONDS
 import com.athimue.backyard.core.LAP_FUN_VOCAL_MILESTONES
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -70,6 +71,23 @@ class SoundManager @Inject constructor(
 
     private val vocalPool: MutableList<Int> = fullVocalPool.toMutableList()
 
+    /**
+     * Pool dédié au jalon 7 min ([LAP_FUN_MINUTE7_SECONDS]).
+     * Chaque son joué est retiré définitivement ; quand ce pool est épuisé
+     * (à partir du 8ème tour), le jalon 7 min pioche dans [vocalPool].
+     */
+    private val fullMinute7Pool: List<Int> = listOf(
+        R.raw.theo,
+        R.raw.theo2,
+        R.raw.theo3,
+        R.raw.theo4,
+        R.raw.theo5,
+        R.raw.theo6,
+        R.raw.theo7,
+    )
+
+    private val minute7Pool: MutableList<Int> = fullMinute7Pool.toMutableList()
+
     private var funAudioLap: Int = -1
     private var finalStartedThisLap: Boolean = false
     private val triggeredMilestonesThisLap: MutableSet<Int> = mutableSetOf()
@@ -129,7 +147,11 @@ class SoundManager @Inject constructor(
                 }
                 if (milestone != null) {
                     triggeredMilestonesThisLap.add(milestone)
-                    playRandomVocal()
+                    if (milestone == LAP_FUN_MINUTE7_SECONDS) {
+                        playFromMinute7PoolOrFallback()
+                    } else {
+                        playRandomVocal()
+                    }
                 }
             }
         }
@@ -139,6 +161,21 @@ class SoundManager @Inject constructor(
         releaseFinalPlayer()
         finalMediaPlayer = MediaPlayer.create(context, R.raw.final_countdown)?.apply {
             setOnCompletionListener { releaseFinalPlayer() }
+            start()
+        }
+    }
+
+    /**
+     * Jalon 7 min : pioche dans [minute7Pool] en priorité.
+     * Si [minute7Pool] est épuisé, fallback sur [vocalPool].
+     */
+    private fun playFromMinute7PoolOrFallback() {
+        val pool = if (minute7Pool.isNotEmpty()) minute7Pool else vocalPool
+        if (pool.isEmpty()) return
+        releaseVocalPlayer()
+        val resId = pool.removeAt(pool.indices.random())
+        vocalMediaPlayer = MediaPlayer.create(context, resId)?.apply {
+            setOnCompletionListener { releaseVocalPlayer() }
             start()
         }
     }
@@ -185,6 +222,8 @@ class SoundManager @Inject constructor(
         releaseLapStartPlayer()
         vocalPool.clear()
         vocalPool.addAll(fullVocalPool)
+        minute7Pool.clear()
+        minute7Pool.addAll(fullMinute7Pool)
         funAudioLap = -1
         finalStartedThisLap = false
         triggeredMilestonesThisLap.clear()
