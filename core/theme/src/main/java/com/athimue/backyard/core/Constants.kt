@@ -21,12 +21,19 @@ const val AUDIO_WARNING_BEEP_COUNT = 2
 /** Dernières secondes du tour : lecture de `final_countdown` (une fois par tour). */
 const val LAP_FUN_FINAL_SECONDS = 30
 
+/** Jalon à 10 min restantes : vocal aléatoire du pool principal. */
+const val LAP_FUN_MINUTE10_SECONDS = 600
+
 /**
- * Jalons (temps restant en secondes) auxquels un vocal aléatoire est joué durant le tour.
- * = 10 min, 7 min et 4 min avant la fin.
- * Chaque vocal joué est retiré définitivement du pool pour ne plus se répéter.
+ * Jalon à 7 min restantes : vocal aléatoire du pool spécial (theo1–7).
+ * Si ce pool est épuisé, fallback sur le pool principal.
  */
-val LAP_FUN_VOCAL_MILESTONES = listOf(600, 420, 240)
+const val LAP_FUN_MINUTE7_SECONDS = 420
+
+/** Jalon à 4 min restantes : vocal aléatoire du pool principal. */
+const val LAP_FUN_MINUTE4_SECONDS = 240
+
+val LAP_FUN_VOCAL_MILESTONES = listOf(LAP_FUN_MINUTE10_SECONDS, LAP_FUN_MINUTE7_SECONDS, LAP_FUN_MINUTE4_SECONDS)
 
 const val EVENT_NAME = "BACKYARD DU GARAGE"
 const val EVENT_EDITION = "1ère édition"
