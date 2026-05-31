@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FinishViewModel @Inject constructor(
-    private val repository: ResultsRepository,
+    repository: ResultsRepository,
 ) : ViewModel() {
 
     val uiState: StateFlow<FinishUiState> = combine(

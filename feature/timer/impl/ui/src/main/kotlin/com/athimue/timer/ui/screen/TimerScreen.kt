@@ -74,7 +74,6 @@ fun TimerScreen(
         viewModel.finishEvent.collect { onRaceFinished() }
     }
 
-    // Flash : quelques clignotements jaune → assombri → jaune, puis retour au noir (nouveau tour).
     var flashColorTarget by remember { mutableStateOf(AppColors.Black) }
     LaunchedEffect(uiState.lapJustChanged) {
         if (!uiState.lapJustChanged) {
