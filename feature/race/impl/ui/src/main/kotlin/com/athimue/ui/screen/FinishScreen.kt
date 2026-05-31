@@ -50,7 +50,10 @@ import com.athimue.backyard.core.EVENT_NAME
 import com.athimue.backyard.core.EVENT_SUBTITLE
 import com.athimue.backyard.core.theme.AppColors
 import com.athimue.backyard.core.theme.AppTypography
+import com.athimue.backyard.feature.race.impl.ui.R
+import com.athimue.ui.model.FinishUiState
 import com.athimue.ui.model.PodiumEntryUiModel
+import com.athimue.ui.model.RunnerUiModel
 import com.athimue.ui.viewmodel.FinishViewModel
 import kotlinx.coroutines.delay
 import com.athimue.backyard.core.theme.R as CoreR
@@ -65,7 +68,20 @@ internal fun FinishScreen(
     onBack: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    FinishScreenContent(uiState = uiState, onBack = onBack)
+}
 
+@Composable
+internal fun FinishPreviewScreen(onBack: () -> Unit = {}) {
+    val uiState = previewFinishUiState()
+    FinishScreenContent(uiState = uiState, onBack = onBack)
+}
+
+@Composable
+private fun FinishScreenContent(
+    uiState: FinishUiState,
+    onBack: () -> Unit = {},
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -420,3 +436,27 @@ private fun OtherRunnerRow(entry: PodiumEntryUiModel) {
         )
     }
 }
+
+private fun previewFinishUiState() = FinishUiState(
+    podium = listOf(
+        PodiumEntryUiModel(
+            rank = 1,
+            runner = RunnerUiModel(dossardId = 3, firstName = "Theo", photoResId = R.drawable.theo),
+            completedLaps = 12,
+            eliminatedOnLap = 13,
+        ),
+        PodiumEntryUiModel(
+            rank = 2,
+            runner = RunnerUiModel(dossardId = 2, firstName = "Brice", photoResId = R.drawable.brice),
+            completedLaps = 11,
+            eliminatedOnLap = 12,
+        ),
+        PodiumEntryUiModel(
+            rank = 3,
+            runner = RunnerUiModel(dossardId = 11, firstName = "Mathieu", photoResId = R.drawable.mathieu),
+            completedLaps = 8,
+            eliminatedOnLap = 9,
+        ),
+    ),
+    others = emptyList(),
+)

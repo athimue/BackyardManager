@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import com.athimue.backyard.feature.race.api.navigation.RaceFeatureApi
 import com.athimue.backyard.feature.race.api.navigation.RaceRoutes
 import com.athimue.ui.screen.FinishScreen
+import com.athimue.ui.screen.FinishPreviewScreen
 import com.athimue.ui.screen.ResultsScreen
 import javax.inject.Inject
 
@@ -24,6 +25,11 @@ class ResultsNavGraphImpl @Inject constructor() : RaceFeatureApi {
         }
         composable(RaceRoutes.FINISH) {
             FinishScreen(
+                onBack = onBack,
+            )
+        }
+        composable(RaceRoutes.FINISH_PREVIEW) {
+            FinishPreviewScreen(
                 onBack = onBack,
             )
         }
