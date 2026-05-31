@@ -54,7 +54,6 @@ dependencies {
     // Compose core
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.runtime:runtime")
-    implementation("androidx.compose.ui:ui-tooling-preview")
 
     // Android TV Material
     implementation(libs.androidx.tv.material)

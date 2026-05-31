@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.core.audio.SoundManager
 import com.athimue.backyard.feature.race.api.model.RaceState
-import com.athimue.settings.ui.model.SettingsRunnerUiModel
 import com.athimue.settings.ui.model.SettingsUiState
 import com.athimue.backyard.feature.race.impl.domain.repository.RaceRepository
 import com.athimue.backyard.feature.race.impl.domain.repository.ResultsRepository
@@ -34,16 +33,14 @@ class SettingsViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             combine(
-                raceRepository.observeRaceState(),
                 raceRepository.observeStartHour(),
-                raceRepository.observeStartMinute()
-            ) { state, hour, minute -> Triple(state, hour, minute) }
-                .combine(resultsRepository.observeRunners()) { (state, hour, minute), runners ->
+                raceRepository.observeStartMinute(),
+            ) { hour, minute -> hour to minute }
+                .combine(resultsRepository.observeRunners()) { (hour, minute), runners ->
                     SettingsUiState(
                         startHour = hour,
                         startMinute = minute,
                         runners = runners.map { it.toSettingsUiModel() },
-                        raceState = state
                     )
                 }.collect { _uiState.value = it }
         }
