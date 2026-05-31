@@ -23,12 +23,10 @@ fun Runner.toRunnerUiModel() = RunnerUiModel(
         "Tristan" -> R.drawable.tristan
         "Marc" -> R.drawable.marc
         "Corentin" -> R.drawable.corentin
-        "Louis" -> R.drawable.louis
         "Thibaut" -> R.drawable.thibaut
         "Luca" -> R.drawable.luca
         "Aubin" -> R.drawable.aubin
         "Mathieu" -> R.drawable.mathieu
-        "Quentin" -> R.drawable.quentin
         else -> R.drawable.mathieu
     },
 )
