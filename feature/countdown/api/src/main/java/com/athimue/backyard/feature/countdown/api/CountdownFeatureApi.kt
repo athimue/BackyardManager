@@ -12,6 +12,7 @@ interface CountdownFeatureApi {
     fun NavGraphBuilder.registerGraph(
         navController: NavController,
         onRaceStarted: () -> Unit,
+        onRaceFinished: () -> Unit,
         onOpenSettings: () -> Unit,
     )
 }

@@ -1,5 +1,9 @@
 package com.athimue.backyard.navigation
 
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -26,7 +30,12 @@ fun BackyardNavHost(
     NavHost(
         navController = navController,
         startDestination = CountdownRoutes.COUNTDOWN,
-        modifier = modifier
+        modifier = modifier,
+        // Smooth cross-fade + subtle zoom between screens (TV-friendly, no sliding)
+        enterTransition = { fadeIn(tween(350)) + scaleIn(tween(350), initialScale = 0.97f) },
+        exitTransition = { fadeOut(tween(250)) },
+        popEnterTransition = { fadeIn(tween(350)) + scaleIn(tween(350), initialScale = 1.03f) },
+        popExitTransition = { fadeOut(tween(250)) },
     ) {
         with(countdownFeatureApi) {
             registerGraph(
@@ -35,6 +44,13 @@ fun BackyardNavHost(
                     navController.navigate(TimerRoutes.TIMER) {
                         popUpTo(CountdownRoutes.COUNTDOWN) { inclusive = true }
                     }
+                },
+                onRaceFinished = {
+                    // Same back stack as a live finish: Timer → Finish
+                    navController.navigate(TimerRoutes.TIMER) {
+                        popUpTo(CountdownRoutes.COUNTDOWN) { inclusive = true }
+                    }
+                    navController.navigate(RaceRoutes.FINISH)
                 },
                 onOpenSettings = { navController.navigate(SettingsRoutes.SETTINGS) },
             )

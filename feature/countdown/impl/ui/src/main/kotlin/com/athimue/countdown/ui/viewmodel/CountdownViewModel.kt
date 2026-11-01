@@ -78,7 +78,8 @@ class CountdownViewModel @Inject constructor(
                         currentTime = formatCurrentTime()
                     )
                 }
-                delay(MILLIS_PER_SECOND)
+                // Align ticks on wall-clock seconds (the scheduled start is on a whole second).
+                delay(MILLIS_PER_SECOND - System.currentTimeMillis() % MILLIS_PER_SECOND + 10L)
             }
         }
     }

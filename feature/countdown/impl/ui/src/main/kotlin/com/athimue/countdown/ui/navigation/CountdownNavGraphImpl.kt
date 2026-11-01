@@ -13,11 +13,13 @@ class CountdownNavGraphImpl @Inject constructor() : CountdownFeatureApi {
     override fun NavGraphBuilder.registerGraph(
         navController: NavController,
         onRaceStarted: () -> Unit,
+        onRaceFinished: () -> Unit,
         onOpenSettings: () -> Unit,
     ) {
         composable(CountdownRoutes.COUNTDOWN) {
             CountdownScreen(
                 onRaceStarted = onRaceStarted,
+                onRaceFinished = onRaceFinished,
                 onOpenSettings = onOpenSettings,
             )
         }
