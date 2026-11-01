@@ -1,5 +1,9 @@
 package com.athimue.ui.viewmodel
 
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.athimue.backyard.core.LAP_DURATION_SECONDS
@@ -15,7 +19,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,12 +35,15 @@ class ResultsViewModel @Inject constructor(
     private val _uiState = combine(
         repository.observeRunners(),
         repository.observeLapResults(),
+        // Only the lap number matters here: recompute the grid when the lap changes,
+        // not on every timer tick.
         timerRepository.observeSeconds()
-    ) { runners, lapResults, seconds ->
+            .map { it / LAP_DURATION_SECONDS + 1 }
+            .distinctUntilChanged()
+    ) { runners, lapResults, currentLap ->
         val resultsByRunner: Map<Int, Map<Int, LapResultUiModel>> =
             lapResults.map { it.toLapResultUiModel() }.groupBy { it.runnerId }
                 .mapValues { (_, list) -> list.associateBy { it.lapNumber } }
-        val currentLap = seconds / LAP_DURATION_SECONDS + 1
         val eliminatedRunnerIds = lapResults
             .filter { it.status == LapStatus.ELIMINATED }
             .map { it.runnerId }
@@ -75,6 +84,20 @@ class ResultsViewModel @Inject constructor(
 
     val uiState: StateFlow<ResultsUiState> = _uiState
 
+    /** Short-lived confirmation shown after clocking a runner (null = hidden). */
+    private val _clockMessage = MutableStateFlow<String?>(null)
+    val clockMessage: StateFlow<String?> = _clockMessage.asStateFlow()
+    private var clockMessageJob: Job? = null
+
+    private fun showClockMessage(message: String) {
+        clockMessageJob?.cancel()
+        _clockMessage.value = message
+        clockMessageJob = viewModelScope.launch {
+            delay(CLOCK_MESSAGE_DURATION_MS)
+            _clockMessage.value = null
+        }
+    }
+
     /**
      * Records a COMPLETED lap for the runner at the current lap number.
      * Does nothing if a result already exists for that lap.
@@ -86,6 +109,8 @@ class ResultsViewModel @Inject constructor(
             if (_uiState.value.statusFor(runnerId, currentLap) == null) {
                 val lapTime = formatLapTime(totalSeconds % LAP_DURATION_SECONDS)
                 repository.setLapResult(runnerId, currentLap, lapTime, LapStatus.COMPLETED)
+                val name = _uiState.value.runners.firstOrNull { it.dossardId == runnerId }?.firstName.orEmpty()
+                showClockMessage("✓ $name · $lapTime · tour $currentLap   (OK sur la case pour annuler)")
             }
         }
     }
@@ -120,3 +145,5 @@ class ResultsViewModel @Inject constructor(
         return "%02d:%02d".format(minutes, secs)
     }
 }
+
+private const val CLOCK_MESSAGE_DURATION_MS = 4_000L

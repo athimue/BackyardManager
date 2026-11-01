@@ -11,12 +11,21 @@ data class ResultsUiState(
     val results: Map<Int, Map<Int, LapResultUiModel>> = emptyMap(),
     val currentLap: Int = 1
 ) {
-    val laps: List<Int>
-        get() {
-            val highestResultLap = results.values.flatMap { it.keys }.maxOrNull() ?: 0
-            val maxLap = maxOf(currentLap + 1, highestResultLap + 1, 5).coerceAtMost(RESULTS_MAX_LAPS)
-            return (1..maxLap).toList()
-        }
+    /**
+     * Visible lap columns: a sliding window of at most [RESULTS_MAX_LAPS] laps ending one lap
+     * after the current one, so the current lap always stays on screen (races often go past 15 laps).
+     * Computed once per state instance (the screen reads it for every cell).
+     */
+    val laps: List<Int> by lazy(LazyThreadSafetyMode.NONE) {
+        val highestResultLap = results.values.flatMap { it.keys }.maxOrNull() ?: 0
+        val lastLap = maxOf(currentLap + 1, highestResultLap + 1, 5)
+        val firstLap = (lastLap - RESULTS_MAX_LAPS + 1).coerceAtLeast(1)
+        (firstLap..lastLap).toList()
+    }
+
+    /** First lap shown in the grid (> 1 once the window has started sliding). */
+    val firstVisibleLap: Int
+        get() = laps.firstOrNull() ?: 1
 
     val activeRunnersCount: Int
         get() = runners.count { eliminationLapFor(it.dossardId) == null }

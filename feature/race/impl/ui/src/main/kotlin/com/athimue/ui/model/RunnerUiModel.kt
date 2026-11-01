@@ -9,7 +9,8 @@ import com.athimue.domain.model.Runner
 data class RunnerUiModel(
     val dossardId: Int,
     val firstName: String,
-    @DrawableRes val photoResId: Int,
+    /** null → initials badge (see RunnerAvatar). */
+    @DrawableRes val photoResId: Int?,
 )
 
 fun Runner.toRunnerUiModel() = RunnerUiModel(
@@ -27,6 +28,6 @@ fun Runner.toRunnerUiModel() = RunnerUiModel(
         "Luca" -> R.drawable.luca
         "Aubin" -> R.drawable.aubin
         "Mathieu" -> R.drawable.mathieu
-        else -> R.drawable.mathieu
+        else -> null
     },
 )

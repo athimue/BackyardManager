@@ -1,5 +1,12 @@
 package com.athimue.ui.screen
 
+import com.athimue.backyard.core.theme.components.BackyardIconButton
+import com.athimue.backyard.core.theme.backyardBackground
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -16,6 +23,7 @@ import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -99,14 +107,16 @@ internal fun ResultsScreen(
     onOpenSettings: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val clockMessage by viewModel.clockMessage.collectAsState()
 
     val firstCellRequester = remember { FocusRequester() }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
+    Box(modifier = Modifier.fillMaxSize()) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.Black)
+            .backyardBackground()
             .padding(all = 2.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -123,12 +133,12 @@ internal fun ResultsScreen(
                 horizontalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 StatChip(
-                    label = "Active",
+                    label = "En course",
                     value = uiState.activeRunnersCount.toString(),
                     valueColor = AppColors.GreenFilledBorder
                 )
                 StatChip(
-                    label = "Eliminated",
+                    label = "Éliminés",
                     value = uiState.eliminatedRunnersCount.toString(),
                     valueColor = AppColors.RedFilledBorder
                 )
@@ -137,6 +147,12 @@ internal fun ResultsScreen(
                     value = uiState.runners.size.toString(),
                     valueColor = AppColors.White
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                // Colour legend for the grid
+                LegendItem(color = AppColors.GreenFilledBorder, label = "Bouclé")
+                LegendItem(color = AppColors.OrangeFilledBorder, label = "DNF")
+                LegendItem(color = AppColors.RedFilledBorder, label = "Éliminé")
+                LegendItem(color = AppColors.Yellow, label = "À pointer")
             }
         }
 
@@ -146,7 +162,20 @@ internal fun ResultsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(modifier = Modifier.width(RUNNER_CELL_WIDTH))
+                Box(
+                    modifier = Modifier.width(RUNNER_CELL_WIDTH),
+                    contentAlignment = Alignment.Center
+                ) {
+                    // Earlier laps scrolled out of the sliding window
+                    if (uiState.firstVisibleLap > 1) {
+                        Text(
+                            text = "◀ T1–${uiState.firstVisibleLap - 1}",
+                            color = AppColors.Gray,
+                            fontSize = AppTypography.labelSize,
+                            fontFamily = AppTypography.fontFamily
+                        )
+                    }
+                }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -187,7 +216,7 @@ internal fun ResultsScreen(
         }
 
         // ── Runner rows ──────────────────────────────────────────────────────
-        itemsIndexed(uiState.runners) { runnerIndex, runner ->
+        itemsIndexed(uiState.runners, key = { _, runner -> runner.dossardId }) { runnerIndex, runner ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,7 +239,8 @@ internal fun ResultsScreen(
                             containerColor = AppColors.SurfaceMid,
                             focusedContainerColor = AppColors.Yellow,
                             contentColor = AppColors.Yellow,
-                            focusedContentColor = AppColors.White
+                            // Black on yellow: readable from across the room
+                            focusedContentColor = AppColors.Black
                         )
                     ) {
                         Text(
@@ -228,7 +258,7 @@ internal fun ResultsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "${uiState.completedLapsFor(runner.dossardId)} laps",
+                            text = "${uiState.completedLapsFor(runner.dossardId)} tours",
                             color = AppColors.Gray,
                             fontSize = AppTypography.labelSize,
                             fontFamily = AppTypography.fontFamily
@@ -258,6 +288,11 @@ internal fun ResultsScreen(
                             val lapResult = uiState.lapResultFor(runner.dossardId, lap)
                             val isCross = uiState.isCrossCell(runner.dossardId, lap)
                             var isFocused by remember { mutableStateOf(false) }
+                            // Current lap, runner still in the race, not yet clocked
+                            val isPending = lap == uiState.currentLap &&
+                                lapResult == null &&
+                                !isCross &&
+                                uiState.eliminationLapFor(runner.dossardId) == null
 
                             val cellBackground = when {
                                 isCross -> AppColors.RedFilled
@@ -269,6 +304,7 @@ internal fun ResultsScreen(
                             }
                             val cellBorder = when {
                                 isFocused -> AppColors.Yellow
+                                isPending -> AppColors.Yellow.copy(alpha = 0.6f)
                                 isCross -> AppColors.RedFilledBorder
                                 lapResult?.status == LapStatusUiModel.COMPLETED -> AppColors.GreenFilledBorder
                                 isDnfEliminationCell(lapResult) -> AppColors.OrangeFilledBorder
@@ -345,7 +381,9 @@ internal fun ResultsScreen(
                     RunnerLifeLine(
                         modifier = Modifier.padding(top = 4.dp),
                         runner = runner,
-                        completedLaps = uiState.completedLapsFor(runner.dossardId),
+                        // Position relative to the visible window of laps
+                        completedLaps = (uiState.completedLapsFor(runner.dossardId) - (uiState.firstVisibleLap - 1))
+                            .coerceIn(0, uiState.laps.size),
                         totalLaps = uiState.laps.size,
                         isEliminated = uiState.eliminationLapFor(runner.dossardId) != null
                     )
@@ -357,9 +395,52 @@ internal fun ResultsScreen(
         item { Box(Modifier.height(16.dp)) }
     }
 
+    // ── Clock confirmation toast ────────────────────────────────────────────
+    AnimatedVisibility(
+        visible = clockMessage != null,
+        enter = slideInVertically { it } + fadeIn(),
+        exit = slideOutVertically { it } + fadeOut(),
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .padding(bottom = 24.dp)
+    ) {
+        Text(
+            text = clockMessage.orEmpty(),
+            color = AppColors.White,
+            fontSize = AppTypography.bodySmallSize,
+            fontFamily = AppTypography.fontFamily,
+            fontWeight = AppTypography.semiBold,
+            modifier = Modifier
+                .background(AppColors.GreenFilled, RoundedCornerShape(24.dp))
+                .border(1.dp, AppColors.GreenFilledBorder, RoundedCornerShape(24.dp))
+                .padding(horizontal = 24.dp, vertical = 10.dp)
+        )
+    }
+    }
+
     LaunchedEffect(Unit) {
         bringIntoViewRequester.bringIntoView()
         firstCellRequester.requestFocus()
+    }
+}
+
+@Composable
+private fun LegendItem(color: Color, label: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(10.dp)
+                .background(color, RoundedCornerShape(2.dp))
+        )
+        Text(
+            text = label,
+            color = AppColors.Gray,
+            fontSize = AppTypography.labelSize,
+            fontFamily = AppTypography.fontFamily
+        )
     }
 }
 
@@ -432,32 +513,18 @@ private fun ResultsHeader(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(
+                BackyardIconButton(
+                    icon = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Retour",
                     onClick = onBack,
-                    colors = ButtonDefaults.colors(
-                        containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.Yellow
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = AppColors.GraySubtle
-                    )
-                }
-                Button(
+                    padding = 8.dp,
+                )
+                BackyardIconButton(
+                    icon = Icons.Default.Settings,
+                    contentDescription = "Réglages",
                     onClick = onOpenSettings,
-                    colors = ButtonDefaults.colors(
-                        containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.Yellow
-                    )
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
-                        tint = AppColors.GraySubtle
-                    )
-                }
+                    padding = 8.dp,
+                )
             }
         }
     }
@@ -478,51 +545,6 @@ private fun RunnerLifeLine(
     isEliminated: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val runOffsetX = if (isEliminated) {
-        0f
-    } else {
-        val infiniteTransition = rememberInfiniteTransition(label = "runnerStrideX")
-        infiniteTransition.animateFloat(
-            initialValue = -1.5f,
-            targetValue = 1.5f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 180, easing = LinearEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "runner_stride_x"
-        ).value
-    }
-
-    val runOffsetY = if (isEliminated) {
-        0f
-    } else {
-        val infiniteTransition = rememberInfiniteTransition(label = "runnerStrideY")
-        infiniteTransition.animateFloat(
-            initialValue = 0f,
-            targetValue = -4.5f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 180, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "runner_stride_y"
-        ).value
-    }
-
-    val runTilt = if (isEliminated) {
-        90f
-    } else {
-        val infiniteTransition = rememberInfiniteTransition(label = "runnerTilt")
-        infiniteTransition.animateFloat(
-            initialValue = -6f,
-            targetValue = 6f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(durationMillis = 220, easing = LinearEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "runner_tilt"
-        ).value
-    }
-
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center
@@ -547,7 +569,7 @@ private fun RunnerLifeLine(
                     .background(AppColors.GraySubtle, RoundedCornerShape(2.dp))
             )
 
-            if (completedLaps > 0) {
+            if (completedLaps > 0 && totalLaps > 0) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth(completedLaps.toFloat() / totalLaps)
@@ -568,55 +590,105 @@ private fun RunnerLifeLine(
             Box(
                 modifier = Modifier
                     .size(photoSize)
-                    .offset(
-                        x = photoOffsetX + runOffsetX.dp,
-                        y = (runOffsetY - lineBottomPadding.value).dp
-                    )
+                    .offset(x = photoOffsetX, y = -lineBottomPadding)
                     .align(Alignment.BottomStart)
             ) {
-                Image(
-                    painter = painterResource(runner.photoResId),
-                    contentDescription = runner.firstName,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .matchParentSize()
-                        .graphicsLayer {
-                            rotationZ = runTilt
-                        }
-                )
-
                 if (isEliminated) {
-                    val sleepTransition = rememberInfiniteTransition(label = "sleepZzz")
-                    val zzzOffsetY by sleepTransition.animateFloat(
-                        initialValue = 2f,
-                        targetValue = -4f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = 900, easing = FastOutSlowInEasing),
-                            repeatMode = RepeatMode.Reverse
-                        ),
-                        label = "zzz_float_y"
-                    )
-                    val zzzAlpha by sleepTransition.animateFloat(
-                        initialValue = 0.55f,
-                        targetValue = 1f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = 900, easing = LinearEasing),
-                            repeatMode = RepeatMode.Reverse
-                        ),
-                        label = "zzz_alpha"
-                    )
-
-                    Image(
-                        painter = painterResource(R.drawable.zzz),
-                        contentDescription = "Sleeping",
-                        modifier = Modifier
-                            .size(14.dp)
-                            .align(Alignment.TopEnd)
-                            .offset(x = 4.dp, y = (-4).dp + zzzOffsetY.dp)
-                            .alpha(zzzAlpha)
-                    )
+                    SleepingRunnerPhoto(runner = runner)
+                } else {
+                    RunningRunnerPhoto(runner = runner)
                 }
             }
         }
     }
+}
+
+/**
+ * Animated values are only read inside graphicsLayer {} (draw phase), so the stride
+ * animation never triggers recomposition or relayout — only a cheap redraw of the photo.
+ */
+@Composable
+private fun BoxScope.RunningRunnerPhoto(runner: RunnerUiModel) {
+    val transition = rememberInfiniteTransition(label = "runnerStride")
+    val strideX = transition.animateFloat(
+        initialValue = -1.5f,
+        targetValue = 1.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 180, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "runner_stride_x"
+    )
+    val strideY = transition.animateFloat(
+        initialValue = 0f,
+        targetValue = -4.5f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 180, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "runner_stride_y"
+    )
+    val tilt = transition.animateFloat(
+        initialValue = -6f,
+        targetValue = 6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 220, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "runner_tilt"
+    )
+
+    RunnerAvatar(
+        runner = runner,
+        modifier = Modifier
+            .matchParentSize()
+            .graphicsLayer {
+                translationX = strideX.value.dp.toPx()
+                translationY = strideY.value.dp.toPx()
+                rotationZ = tilt.value
+            }
+    )
+}
+
+@Composable
+private fun BoxScope.SleepingRunnerPhoto(runner: RunnerUiModel) {
+    val transition = rememberInfiniteTransition(label = "sleepZzz")
+    val zzzOffsetY = transition.animateFloat(
+        initialValue = 2f,
+        targetValue = -4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 900, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "zzz_float_y"
+    )
+    val zzzAlpha = transition.animateFloat(
+        initialValue = 0.55f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 900, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "zzz_alpha"
+    )
+
+    RunnerAvatar(
+        runner = runner,
+        modifier = Modifier
+            .matchParentSize()
+            .graphicsLayer { rotationZ = 90f }
+    )
+
+    Image(
+        painter = painterResource(R.drawable.zzz),
+        contentDescription = "Sleeping",
+        modifier = Modifier
+            .size(14.dp)
+            .align(Alignment.TopEnd)
+            .offset(x = 4.dp, y = (-4).dp)
+            .graphicsLayer {
+                translationY = zzzOffsetY.value.dp.toPx()
+                alpha = zzzAlpha.value
+            }
+    )
 }
