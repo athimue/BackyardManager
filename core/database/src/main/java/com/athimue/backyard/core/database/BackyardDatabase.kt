@@ -12,7 +12,7 @@ import com.athimue.backyard.core.database.entity.RunnerEntity
 @Database(
     entities = [RunnerEntity::class, LapResultEntity::class, RaceEntity::class],
     version = 2,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class BackyardDatabase : RoomDatabase() {
     abstract fun runnerDao(): RunnerDao

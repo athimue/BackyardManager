@@ -51,8 +51,16 @@ class ResultsRepositoryImpl @Inject constructor(
     override suspend fun removeLapResult(runnerId: Int, lapNumber: Int) =
         withContext(Dispatchers.IO) { lapResultDao.delete(runnerId, lapNumber) }
 
-    override suspend fun removeRunner(runnerId: Int) =
-        withContext(Dispatchers.IO) { runnerDao.deleteById(runnerId) }
+    override suspend fun addRunner(firstName: String) = withContext(Dispatchers.IO) {
+        val nextBib = (runnerDao.getMaxId() ?: 0) + 1
+        runnerDao.insert(RunnerEntity(dossardId = nextBib, firstName = firstName.trim()))
+    }
+
+    override suspend fun removeRunner(runnerId: Int) = withContext(Dispatchers.IO) {
+        runnerDao.deleteById(runnerId)
+        // Don't leave orphan lap results behind (a re-used bib would inherit them)
+        lapResultDao.deleteForRunner(runnerId)
+    }
 
     override suspend fun clearAllResults() =
         withContext(Dispatchers.IO) { lapResultDao.deleteAll() }

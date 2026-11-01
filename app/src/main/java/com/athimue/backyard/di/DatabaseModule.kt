@@ -21,7 +21,9 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): BackyardDatabase =
         Room.databaseBuilder(context, BackyardDatabase::class.java, "backyard.db")
-            .fallbackToDestructiveMigration()
+            // No silent wipe on app update anymore: a schema change now requires a Migration
+            // (otherwise the build-time schema check / runtime will tell you). Only a downgrade wipes.
+            .fallbackToDestructiveMigrationOnDowngrade()
             .build()
 
     @Provides

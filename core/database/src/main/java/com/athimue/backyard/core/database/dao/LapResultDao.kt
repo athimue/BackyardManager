@@ -18,6 +18,9 @@ interface LapResultDao {
     @Query("DELETE FROM lap_results WHERE runner_id = :runnerId AND lap_number = :lapNumber")
     suspend fun delete(runnerId: Int, lapNumber: Int)
 
+    @Query("DELETE FROM lap_results WHERE runner_id = :runnerId")
+    suspend fun deleteForRunner(runnerId: Int)
+
     @Query("DELETE FROM lap_results")
     suspend fun deleteAll()
 }

@@ -10,6 +10,7 @@ interface ResultsRepository {
     fun observeLapResults(): Flow<List<LapResult>>
     suspend fun setLapResult(runnerId: Int, lapNumber: Int, time: String, status: LapStatus)
     suspend fun removeLapResult(runnerId: Int, lapNumber: Int)
+    suspend fun addRunner(firstName: String)
     suspend fun removeRunner(runnerId: Int)
     suspend fun clearAllResults()
     suspend fun restoreDefaultRunners()
