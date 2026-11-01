@@ -1,5 +1,18 @@
 package com.athimue.timer.ui.screen
 
+import androidx.compose.material.icons.automirrored.filled.List
+import com.athimue.backyard.core.theme.components.BackyardButtonStyle
+import com.athimue.backyard.core.theme.components.BackyardButton
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.ui.graphics.Brush
+import com.athimue.backyard.core.theme.backyardBackground
+import com.athimue.backyard.core.theme.AppEffects
+import androidx.compose.animation.core.snap
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -74,10 +87,10 @@ fun TimerScreen(
         viewModel.finishEvent.collect { onRaceFinished() }
     }
 
-    var flashColorTarget by remember { mutableStateOf(AppColors.Black) }
+    var flashColorTarget by remember { mutableStateOf(Color.Transparent) }
     LaunchedEffect(uiState.lapJustChanged) {
         if (!uiState.lapJustChanged) {
-            flashColorTarget = AppColors.Black
+            flashColorTarget = Color.Transparent
             return@LaunchedEffect
         }
         val yellow = AppColors.Yellow
@@ -90,10 +103,10 @@ fun TimerScreen(
         }
         flashColorTarget = yellow
         delay(120)
-        flashColorTarget = AppColors.Black
+        flashColorTarget = Color.Transparent
     }
 
-    val flashColor by animateColorAsState(
+    val flashColor = animateColorAsState(
         targetValue = flashColorTarget,
         animationSpec = tween(durationMillis = 85, easing = LinearEasing),
         label = "lap_flash",
@@ -102,7 +115,9 @@ fun TimerScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(flashColor)
+            // Draw phase only: the lap flash animates without recomposing the whole screen
+            .backyardBackground()
+            .drawBehind { drawRect(flashColor.value) }
             .padding(horizontal = 32.dp, vertical = 2.dp)
     ) {
         // ── Header ──────────────────────────────────────────────────────────
@@ -123,6 +138,7 @@ fun TimerScreen(
                 Text(
                     text = EVENT_NAME,
                     fontSize = AppTypography.titleSize,
+                    style = AppEffects.glow(AppColors.Yellow, blurRadius = 24f),
                     fontFamily = AppTypography.titleFontFamily,
                     fontWeight = AppTypography.bold,
                     color = AppColors.Yellow,
@@ -180,6 +196,10 @@ fun TimerScreen(
                     color = AppColors.White,
                     textAlign = TextAlign.Center,
                     fontSize = 100.sp,
+                    style = AppEffects.glow(
+                        if (uiState.isLapEndUrgent) Color(0xFFE53935) else AppColors.Yellow,
+                        blurRadius = 40f
+                    ),
                     fontFamily = AppTypography.fontFamily,
                     fontWeight = AppTypography.bold,
                 )
@@ -231,6 +251,28 @@ fun TimerScreen(
             )
         }
 
+        // ── Last runner standing (Backyard "assist" lap) ─────────────────────
+        AnimatedVisibility(
+            visible = uiState.lastRunnerName != null,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically(),
+        ) {
+            Text(
+                text = "🏆  ${uiState.lastRunnerName.orEmpty().uppercase()} EST LE DERNIER EN COURSE — " +
+                    "IL DOIT BOUCLER CE TOUR POUR GAGNER",
+                color = AppColors.Black,
+                fontSize = AppTypography.bodySmallSize,
+                fontFamily = AppTypography.fontFamily,
+                fontWeight = AppTypography.bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 6.dp)
+                    .background(AppColors.Yellow, RoundedCornerShape(8.dp))
+                    .padding(vertical = 8.dp)
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -263,48 +305,18 @@ fun TimerScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
             ) {
-                Button(
+                BackyardButton(
+                    text = "Résultats",
+                    icon = Icons.AutoMirrored.Filled.List,
+                    style = BackyardButtonStyle.Primary,
                     onClick = onShowResults,
-                    colors = ButtonDefaults.colors(
-                        containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.Yellow,
-                        contentColor = AppColors.White,
-                        focusedContentColor = AppColors.White
-                    )
-                ) {
-                    Text(
-                        text = "📋  Résultats",
-                        fontSize = AppTypography.bodySmallSize,
-                        fontFamily = AppTypography.fontFamily,
-                        fontWeight = AppTypography.semiBold
-                    )
-                }
+                )
 
-                Button(
+                BackyardButton(
+                    text = "Réglages",
+                    icon = Icons.Default.Settings,
                     onClick = onOpenSettings,
-                    colors = ButtonDefaults.colors(
-                        containerColor = AppColors.SurfaceMid,
-                        focusedContainerColor = AppColors.Yellow,
-                        contentColor = AppColors.White,
-                        focusedContentColor = AppColors.White
-                    )
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = "Settings",
-                            tint = AppColors.Yellow,
-                        )
-                        Text(
-                            text = "  Réglages",
-                            fontSize = AppTypography.bodySmallSize,
-                            fontFamily = AppTypography.fontFamily,
-                            fontWeight = AppTypography.semiBold
-                        )
-                    }
-                }
+                )
             }
         }
     }
@@ -409,6 +421,13 @@ private fun ProgressBar(
         animationSpec = tween(600),
         label = "progress_color"
     )
+    // Glide between the 1 s ticks instead of jumping; snap back to 0 on a new lap.
+    val target = progress.coerceIn(0f, 1f)
+    val smoothProgress by animateFloatAsState(
+        targetValue = target,
+        animationSpec = if (target < 0.01f) snap<Float>() else tween<Float>(durationMillis = 1_000, easing = LinearEasing),
+        label = "progress_fill"
+    )
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(4.dp))
@@ -416,10 +435,10 @@ private fun ProgressBar(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(progress.coerceIn(0f, 1f))
+                .fillMaxWidth(smoothProgress)
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(4.dp))
-                .background(fillColor)
+                .background(Brush.horizontalGradient(listOf(fillColor.copy(alpha = 0.55f), fillColor)))
         )
     }
 }

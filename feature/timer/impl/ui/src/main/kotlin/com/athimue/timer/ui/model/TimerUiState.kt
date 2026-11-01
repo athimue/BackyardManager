@@ -10,6 +10,8 @@ data class TimerUiState(
     val seconds: Int = 0,
     val currentTime: String = formatCurrentTime(),
     val activeRunnersCount: Int = 0,
+    /** Name of the only runner still in the race (Backyard "assist" lap), null otherwise. */
+    val lastRunnerName: String? = null,
     val lapJustChanged: Boolean = false
 ) {
     val currentLap: Int

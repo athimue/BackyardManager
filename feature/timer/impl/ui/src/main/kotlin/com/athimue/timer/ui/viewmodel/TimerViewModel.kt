@@ -56,18 +56,40 @@ class TimerViewModel @Inject constructor(
             resultsRepository.observeRunners(),
             resultsRepository.observeLapResults()
         ) { runners, lapResults ->
-            val active = runners.count { runner ->
-                lapResults.none { it.runnerId == runner.dossardId && it.status == LapStatus.ELIMINATED }
+            val eliminationLap: Map<Int, Int> = lapResults
+                .filter { it.status == LapStatus.ELIMINATED }
+                .groupBy { it.runnerId }
+                .mapValues { (_, list) -> list.minOf { it.lapNumber } }
+            val activeRunners = runners.filter { it.dossardId !in eliminationLap }
+
+            // Backyard rule: the last runner standing wins only once they complete a loop
+            // that every other runner failed to complete.
+            val winnerFound = runners.size > 1 && activeRunners.size == 1 && run {
+                val last = activeRunners.single()
+                val othersOutAt = eliminationLap.values.maxOrNull() ?: return@run false
+                lapResults.any {
+                    it.runnerId == last.dossardId &&
+                        it.status == LapStatus.COMPLETED &&
+                        it.lapNumber >= othersOutAt
+                }
             }
-            Pair(runners.size, active)
-        }.collect { (total, active) ->
-            if (active > 0) hasSeenActiveRunners = true
-            if (total > 0 && active == 0 && hasSeenActiveRunners && !finishEmitted) {
+            RunnersSnapshot(
+                total = runners.size,
+                active = activeRunners.size,
+                lastRunnerName = activeRunners.singleOrNull()?.takeIf { runners.size > 1 }?.firstName,
+                winnerFound = winnerFound,
+            )
+        }.collect { snapshot ->
+            if (snapshot.active > 0) hasSeenActiveRunners = true
+            val everybodyOut = snapshot.total > 0 && snapshot.active == 0 && hasSeenActiveRunners
+            if ((everybodyOut || snapshot.winnerFound) && !finishEmitted) {
                 finishEmitted = true
                 _finishEvent.tryEmit(Unit)
                 viewModelScope.launch { raceRepository.setRaceState(RaceState.FINISHED) }
             }
-            _uiState.update { it.copy(activeRunnersCount = active) }
+            _uiState.update {
+                it.copy(activeRunnersCount = snapshot.active, lastRunnerName = snapshot.lastRunnerName)
+            }
         }
     }
 
@@ -78,7 +100,20 @@ class TimerViewModel @Inject constructor(
             val seedElapsed = if (seedStartMillis > 0L)
                 ((System.currentTimeMillis() - seedStartMillis) / 1000).toInt().coerceAtLeast(0)
             else 0
-            previousLap = seedElapsed / LAP_DURATION_SECONDS + 1
+            val seedLap = seedElapsed / LAP_DURATION_SECONDS + 1
+
+            // Catch-up after a restart (app killed, TV standby, crash…): every lap that ended
+            // while the app was not running must still be processed. Silent: no sound, no flash.
+            // Idempotent — runners that already have a result (or were eliminated earlier) are skipped.
+            // Not after the race is over (the winner must not be DNF'd on the next lap).
+            if (raceRepository.observeRaceState().first() == RaceState.FINISHED) finishEmitted = true
+            if (!finishEmitted) {
+                for (missedLap in 1 until seedLap) {
+                    autoEliminateRunners(missedLap)
+                }
+            }
+
+            previousLap = seedLap
             warningPlayedForLap = previousLap
 
             // Cache the actual start millis — it won't change once the race is running.
@@ -97,24 +132,34 @@ class TimerViewModel @Inject constructor(
                 val remaining = LAP_DURATION_SECONDS - (elapsed % LAP_DURATION_SECONDS)
 
                 // New lap detected
-                if (currentLap > previousLap) {
-                    autoEliminateRunners(previousLap)
+                if (currentLap > previousLap && !finishEmitted) {
+                    // Usually a single lap, but covers ticks delayed by more than a lap (e.g. device sleep).
+                    for (endedLap in previousLap until currentLap) {
+                        autoEliminateRunners(endedLap)
+                    }
                     soundManager.playNewLapStart()
                     triggerLapFlash()
                     previousLap = currentLap
                 }
 
                 // End-of-lap warning (once per lap, at 30s remaining)
-                if (remaining <= LAP_WARNING_SECONDS && warningPlayedForLap != currentLap) {
+                if (remaining <= LAP_WARNING_SECONDS && warningPlayedForLap != currentLap && !finishEmitted) {
                     soundManager.playEndLapWarning()
                     warningPlayedForLap = currentLap
                 }
 
-                soundManager.updateLapFunAudio(remainingSecondsInLap = remaining, currentLap = currentLap)
+                if (!finishEmitted) {
+                    soundManager.updateLapFunAudio(remainingSecondsInLap = remaining, currentLap = currentLap)
+                }
 
                 _uiState.update { it.copy(seconds = elapsed, currentTime = formatCurrentTime()) }
                 timerRepository.updateSeconds(elapsed)
-                delay(1_000)
+                // Wake up just after the next elapsed-second boundary so the display
+                // never skips or freezes a second (a fixed 1 s delay slowly drifts in phase).
+                val phase = if (cachedStartMillis > 0L)
+                    (System.currentTimeMillis() - cachedStartMillis).mod(1_000L)
+                else 0L
+                delay(1_000L - phase + TICK_MARGIN_MS)
             }
         }
     }
@@ -144,3 +189,13 @@ class TimerViewModel @Inject constructor(
         }
     }
 }
+
+/** Small margin so the tick lands after the second boundary, not right before it. */
+private const val TICK_MARGIN_MS = 10L
+
+private data class RunnersSnapshot(
+    val total: Int,
+    val active: Int,
+    val lastRunnerName: String?,
+    val winnerFound: Boolean,
+)
