@@ -67,7 +67,25 @@ class SoundManager @Inject constructor(
         R.raw.zizi_fesse,
     )
 
-    private val vocalPool: MutableList<Int> = fullVocalPool.toMutableList()
+    /**
+     * Played sounds are persisted (by resource entry name, stable across builds) so an app
+     * restart during the race does not bring already-heard vocals back.
+     */
+    private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+
+    private fun Int.entryName(): String = context.resources.getResourceEntryName(this)
+
+    private fun loadPool(full: List<Int>, key: String): MutableList<Int> {
+        val played = prefs.getStringSet(key, emptySet()).orEmpty()
+        return full.filterNot { it.entryName() in played }.toMutableList()
+    }
+
+    private fun markPlayed(resId: Int, key: String) {
+        val played = prefs.getStringSet(key, emptySet()).orEmpty() + resId.entryName()
+        prefs.edit().putStringSet(key, played).apply()
+    }
+
+    private val vocalPool: MutableList<Int> = loadPool(fullVocalPool, KEY_PLAYED_VOCALS)
 
     /**
      * Pool dédié au jalon 7 min ([LAP_FUN_MINUTE7_SECONDS]).
@@ -84,7 +102,7 @@ class SoundManager @Inject constructor(
         R.raw.theo7,
     )
 
-    private val minute7Pool: MutableList<Int> = fullMinute7Pool.toMutableList()
+    private val minute7Pool: MutableList<Int> = loadPool(fullMinute7Pool, KEY_PLAYED_MINUTE7)
 
     private var funAudioLap: Int = -1
     private var finalStartedThisLap: Boolean = false
@@ -124,8 +142,14 @@ class SoundManager @Inject constructor(
     fun updateLapFunAudio(remainingSecondsInLap: Int, currentLap: Int) {
         if (currentLap != funAudioLap) {
             funAudioLap = currentLap
-            finalStartedThisLap = false
+            // On a normal lap change remaining ≈ LAP_DURATION, so nothing is pre-marked.
+            // After an app restart mid-lap, milestones already passed are skipped instead of
+            // all firing at once (the milestone of the current second still plays).
+            finalStartedThisLap = remainingSecondsInLap < LAP_FUN_FINAL_SECONDS
             triggeredMilestonesThisLap.clear()
+            triggeredMilestonesThisLap.addAll(
+                LAP_FUN_VOCAL_MILESTONES.filter { remainingSecondsInLap < it }
+            )
             releaseFinalPlayer()
             releaseVocalPlayer()
         }
@@ -168,10 +192,12 @@ class SoundManager @Inject constructor(
      * Si [minute7Pool] est épuisé, fallback sur [vocalPool].
      */
     private fun playFromMinute7PoolOrFallback() {
-        val pool = if (minute7Pool.isNotEmpty()) minute7Pool else vocalPool
+        val fromMinute7 = minute7Pool.isNotEmpty()
+        val pool = if (fromMinute7) minute7Pool else vocalPool
         if (pool.isEmpty()) return
         releaseVocalPlayer()
         val resId = pool.removeAt(pool.indices.random())
+        markPlayed(resId, if (fromMinute7) KEY_PLAYED_MINUTE7 else KEY_PLAYED_VOCALS)
         vocalMediaPlayer = MediaPlayer.create(context, resId)?.apply {
             setOnCompletionListener { releaseVocalPlayer() }
             start()
@@ -187,6 +213,7 @@ class SoundManager @Inject constructor(
         releaseVocalPlayer()
         val index = vocalPool.indices.random()
         val resId = vocalPool.removeAt(index)
+        markPlayed(resId, KEY_PLAYED_VOCALS)
         val player = MediaPlayer.create(context, resId)?.apply {
             setOnCompletionListener { releaseVocalPlayer() }
             start()
@@ -225,5 +252,12 @@ class SoundManager @Inject constructor(
         funAudioLap = -1
         finalStartedThisLap = false
         triggeredMilestonesThisLap.clear()
+        prefs.edit().clear().apply()
+    }
+
+    private companion object {
+        const val PREFS_NAME = "sound_manager"
+        const val KEY_PLAYED_VOCALS = "played_vocals"
+        const val KEY_PLAYED_MINUTE7 = "played_minute7"
     }
 }
