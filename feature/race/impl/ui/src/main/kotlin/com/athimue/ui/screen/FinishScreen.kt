@@ -1,5 +1,8 @@
 package com.athimue.ui.screen
 
+import com.athimue.backyard.core.theme.components.BackyardIconButton
+import com.athimue.backyard.core.theme.backyardBackground
+import com.athimue.backyard.core.formatDistanceKm
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -66,10 +69,10 @@ internal fun FinishScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    Box(modifier = Modifier.fillMaxSize().backyardBackground()) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(AppColors.Black)
             .padding(horizontal = 32.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -131,6 +134,10 @@ internal fun FinishScreen(
 
         item { Spacer(modifier = Modifier.height(16.dp)) }
     }
+
+    // Drawn above the list, purely decorative (no focus / input)
+    Confetti(modifier = Modifier.fillMaxSize())
+    }
 }
 
 @Composable
@@ -170,19 +177,11 @@ private fun FinishHeader(onBack: () -> Unit) {
                 Spacer(modifier = Modifier.weight(1f))
             }
 
-            Button(
+            BackyardIconButton(
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Retour",
                 onClick = onBack,
-                colors = ButtonDefaults.colors(
-                    containerColor = AppColors.SurfaceMid,
-                    focusedContainerColor = AppColors.Yellow,
-                ),
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Retour",
-                    tint = AppColors.GraySubtle,
-                )
-            }
+            )
         }
 
         Box(
@@ -298,10 +297,8 @@ private fun PodiumSlot(
                     .clip(CircleShape)
                     .border(width = 3.dp, color = medalColor, shape = CircleShape),
             ) {
-                Image(
-                    painter = painterResource(entry.runner.photoResId),
-                    contentDescription = entry.runner.firstName,
-                    contentScale = ContentScale.Crop,
+                RunnerAvatar(
+                    runner = entry.runner,
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -321,7 +318,7 @@ private fun PodiumSlot(
 
             // Laps count
             Text(
-                text = "${entry.completedLaps} tour${if (entry.completedLaps > 1) "s" else ""}",
+                text = "${entry.completedLaps} tour${if (entry.completedLaps > 1) "s" else ""} · ${formatDistanceKm(entry.completedLaps)}",
                 fontSize = AppTypography.labelSize,
                 fontFamily = AppTypography.fontFamily,
                 fontWeight = AppTypography.semiBold,
@@ -395,10 +392,8 @@ private fun OtherRunnerRow(entry: PodiumEntryUiModel) {
                 .clip(CircleShape)
                 .border(1.dp, AppColors.GraySubtle, CircleShape),
         ) {
-            Image(
-                painter = painterResource(entry.runner.photoResId),
-                contentDescription = entry.runner.firstName,
-                contentScale = ContentScale.Crop,
+            RunnerAvatar(
+                runner = entry.runner,
                 modifier = Modifier.fillMaxSize(),
             )
         }
@@ -413,7 +408,7 @@ private fun OtherRunnerRow(entry: PodiumEntryUiModel) {
         )
 
         Text(
-            text = "${entry.completedLaps} tour${if (entry.completedLaps > 1) "s" else ""}",
+            text = "${entry.completedLaps} tour${if (entry.completedLaps > 1) "s" else ""} · ${formatDistanceKm(entry.completedLaps)}",
             fontSize = AppTypography.labelSize,
             fontFamily = AppTypography.fontFamily,
             color = AppColors.WhiteDim,
