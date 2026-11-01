@@ -1,84 +1,138 @@
-# BackyardManager
+<div align="center">
 
-Android TV app for managing and tracking a **Backyard Ultra** race in real time.
+<img src="core/theme/src/main/res/drawable/logo.png" width="140" alt="Backyard Manager logo"/>
 
-## What is a Backyard Ultra?
+# Backyard Manager
 
-A Backyard Ultra is a timed ultramarathon format where runners complete a 6.7 km loop every hour. The last runner still going wins. Any runner who fails to complete a loop within the hour is eliminated.
+**Run a Backyard Ultra from your living-room TV.**
+A big-screen race clock, live lap grid and podium for [Backyard Ultra](https://en.wikipedia.org/wiki/Backyard_ultra) events, built with Jetpack Compose for Android TV.
 
-## Screenshots
+![Kotlin](https://img.shields.io/badge/Kotlin-2.0-7F52FF?logo=kotlin&logoColor=white)
+![Jetpack Compose](https://img.shields.io/badge/Compose_for_TV-Material_3-4285F4?logo=jetpackcompose&logoColor=white)
+![Android TV](https://img.shields.io/badge/Android_TV-minSdk_23-3DDC84?logo=android&logoColor=white)
+![Architecture](https://img.shields.io/badge/architecture-multi--module_·_MVVM-FFCF02)
+![Hilt](https://img.shields.io/badge/DI-Hilt-orange)
+![Room](https://img.shields.io/badge/DB-Room-blue)
 
-| Countdown | Timer | Results |
-|-----------|-------|---------|
+<!-- TODO: replace with a short GIF of a lap change (a GIF in the first screen of a README is the #1 driver of stars) -->
+<img src="screenshots/timer.png" width="85%" alt="Race clock on a TV"/>
+
+</div>
+
+---
+
+## 🏃 What is a Backyard Ultra?
+
+Every hour, on the hour, runners start a **6.706 km loop**. Finish it before the next hour and you may start again. Miss the cutoff and you're out. The last runner standing — who must complete one more loop **alone** — wins. Races routinely go past 24 h (the world record is over 100 hours).
+
+That format needs an organiser that **never blinks**: an exact hourly clock, who's still in, who has clocked in this lap, and a loud warning before the next start. Backyard Manager turns any Android TV into that organiser.
+
+> Born for the *Backyard du Garage* — a race between friends, 1st edition on 17 April 2026 — and battle-tested on race day.
+
+## ✨ Features
+
+| | |
+|---|---|
+| ⏱️ **Countdown** | Big countdown to the scheduled start, auto-starts at the exact time (or start manually). |
+| 🕐 **Race clock** | Time to next start, current lap, runners still in, total elapsed time. Progress bar turns red in the last 30 s, the screen flashes on every new lap. |
+| 🔊 **Audio cues** | Start horn each hour, beeps 30 s before the cutoff, *The Final Countdown* in the last seconds, random voice lines at 10 / 7 / 4 minutes — never twice in the same race. |
+| 📋 **Live lap grid** | Press a runner's name with the remote to clock their lap. Colour-coded cells (done / DNF / eliminated), current lap highlighted, best lap per runner, and an animated "life line" where each runner's photo runs along the track. |
+| 🤖 **Automatic eliminations** | Anyone who hasn't clocked in when the hour strikes is marked DNF — even laps that ended while the app was closed are caught up on restart. |
+| 🏆 **Last runner standing** | Detects the solo "assist" lap and declares the winner only once it's completed, per the official rules. |
+| 🥇 **Podium** | Final ranking with laps and distance covered, with confetti. |
+| ⚙️ **Settings** | Start time, add/remove runners, safe double-press for destructive actions. |
+| 💾 **Crash-proof** | Everything is persisted in Room: unplug the TV mid-race, plug it back, carry on. |
+
+## 📸 Screenshots
+
+| Countdown | Race clock | Live results |
+|-----------|-----------|--------------|
 | ![Countdown](screenshots/countdown.png) | ![Timer](screenshots/timer.png) | ![Results](screenshots/result.png) |
 
-## Features
+## 🏗️ Architecture
 
-- **Countdown screen** — displays the time remaining before the race starts with auto-start at the scheduled time
-- **Timer screen** — live race clock, current lap, active runners count, lap progress bar (turns red in the last 30s), total elapsed race time
-- **Results screen** — live grid of all runners × laps with:
-  - Tap a runner's name to record their lap time for the current lap
-  - Tap a lap cell to cycle its status (empty → completed → eliminated)
-  - Runners sorted by their time on the current lap (fastest first), then alphabetically
-  - Current lap column highlighted
-  - Best lap time shown per runner
-  - Life line showing each runner's photo advancing along a track as laps are completed
-- **Settings screen** — configure race start time, manage runners, reset the race
-- Runners who miss the lap cutoff are automatically eliminated with a time of **1:00:00**
+A small app, but structured like a production one — handy if you're looking for a **real-world Compose for TV / multi-module example**.
 
-## Tech Stack
+- **Feature modules split into `api` / `impl`** — the app module only knows the navigation contracts; implementations are bound with Hilt.
+- **Clean layering** in each feature: `ui` (Compose + ViewModel + StateFlow) → `domain` (use cases, repository interfaces) → `data` (Room).
+- **TV-first UI**: D-pad focus handling, `tv-material3` components, readable from across the room.
+- **Performance-minded Compose**: animations read in the draw phase (`graphicsLayer`, `drawBehind`), state derived once per lap rather than once per second.
 
-| Layer | Technology |
-|-------|-----------|
-| UI | Jetpack Compose + AndroidX TV Material 3 |
-| Architecture | MVVM (ViewModel + StateFlow) |
-| Database | Room (SQLite) |
-| Dependency Injection | Hilt |
-| Navigation | Jetpack Navigation Compose |
-| Language | Kotlin |
-| Min SDK | 23 |
-| Target SDK | 36 |
+```mermaid
+graph TD
+    app[":app"] --> countdownApi[":feature:countdown:api"]
+    app --> timerApi[":feature:timer:api"]
+    app --> raceApi[":feature:race:api"]
+    app --> settingsApi[":feature:settings:api"]
 
-## Project Structure
+    app -.Hilt.-> countdownUi[":feature:countdown:impl:ui"]
+    app -.Hilt.-> timerUi[":feature:timer:impl:ui"]
+    app -.Hilt.-> raceUi[":feature:race:impl:ui"]
+    app -.Hilt.-> settingsUi[":feature:settings:impl:ui"]
 
-```
-app/src/main/java/com/athimue/backyard/
-├── audio/          # SoundManager (lap start / end-lap warning)
-├── composable/     # All screens (Countdown, Timer, Results, Settings, Navigation)
-├── data/db/        # Room database, entities, DAOs
-├── di/             # Hilt modules (DatabaseModule, RepositoryModule)
-├── model/          # Domain models and UI state classes
-├── repository/     # Repository interfaces and Room implementations
-├── ui/theme/       # AppColors, AppTypography
-└── viewmodel/      # ViewModels for each screen
+    countdownUi --> countdownDomain[":feature:countdown:impl:domain"]
+    countdownDomain --> raceDomain[":feature:race:impl:domain"]
+    timerUi --> raceDomain
+    raceUi --> raceDomain
+    settingsUi --> raceDomain
+    raceData[":feature:race:impl:data"] --> raceDomain
+    raceData --> database[":core:database"]
+
+    timerUi --> audio[":core:audio"]
+    settingsUi --> audio
+    countdownUi --> theme[":core:theme"]
+    timerUi --> theme
+    raceUi --> theme
+    settingsUi --> theme
 ```
 
-## Build & Deploy
+| Layer | Tech |
+|-------|------|
+| UI | Jetpack Compose · AndroidX TV Material 3 |
+| State | ViewModel · Kotlin Flow / StateFlow |
+| DI | Hilt |
+| Persistence | Room |
+| Navigation | Navigation Compose |
+| Audio | MediaPlayer · ToneGenerator |
 
-### Requirements
-- Android Studio Hedgehog or later
-- JDK 11+
-- Android TV device or emulator
+## 🚀 Getting started
 
-### Build debug APK
+**Requirements:** Android Studio (latest stable), **JDK 17 or 21** (Gradle 8.13 does not run on JDK 25), an Android TV device or emulator.
 
 ```bash
+git clone https://github.com/athimue/BackyardManager.git
+cd BackyardManager
 ./gradlew assembleDebug
-# Output: app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### Install on Android TV via ADB
+### Install on an Android TV over Wi-Fi
 
-1. On your TV: **Settings → Device Preferences → About** → tap **Build** 7 times to unlock Developer options
-2. Enable **Developer options → USB debugging** and note the TV's IP address
-3. From your machine:
+1. On the TV: **Settings → Device Preferences → About** → press **Build** 7 times to unlock developer options.
+2. Enable **Developer options → USB / network debugging** and note the TV's IP address.
+3. From your computer:
 
 ```bash
 adb connect <TV_IP_ADDRESS>
-adb install app/build/outputs/apk/debug/app-debug.apk
-
-# To update an existing installation:
 adb install -r app/build/outputs/apk/debug/app-debug.apk
 ```
 
-The app will appear in the Android TV launcher.
+The app shows up in the TV launcher.
+
+> 💡 **Testing tip:** set `LAP_DURATION_SECONDS = 150` in `core/theme/.../Constants.kt` to get 2 min 30 laps and see a whole race in minutes.
+
+## 🗺️ Roadmap
+
+Ideas and contributions welcome — these make great first issues:
+
+- [ ] Event name / date / edition configurable from Settings
+- [ ] Configurable lap duration (test mode) from Settings
+- [ ] CSV export & share of the results
+- [ ] Per-runner stats screen (average lap, consistency chart)
+- [ ] Custom runner photos picked from the device
+- [ ] English / French localisation via `strings.xml`
+
+## 🤝 Contributing
+
+Issues and pull requests are welcome! If you organise a backyard with this app, I'd love to hear about it — open an issue with a photo of your setup.
+
+If this project is useful or fun to you, **a ⭐ on the repo really helps** others find it.
