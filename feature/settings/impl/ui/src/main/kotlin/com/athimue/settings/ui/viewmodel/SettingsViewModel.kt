@@ -56,14 +56,20 @@ class SettingsViewModel @Inject constructor(
         viewModelScope.launch { raceRepository.setStartTime(newHour, _uiState.value.startMinute) }
     }
 
-    fun incrementStartMinute() {
-        val newMinute = (_uiState.value.startMinute + 5) % 60
+    fun incrementStartMinute(step: Int = 1) {
+        val newMinute = (_uiState.value.startMinute + step) % 60
         viewModelScope.launch { raceRepository.setStartTime(_uiState.value.startHour, newMinute) }
     }
 
-    fun decrementStartMinute() {
-        val newMinute = (_uiState.value.startMinute - 5 + 60) % 60
+    fun decrementStartMinute(step: Int = 1) {
+        val newMinute = (_uiState.value.startMinute - step + 60) % 60
         viewModelScope.launch { raceRepository.setStartTime(_uiState.value.startHour, newMinute) }
+    }
+
+    fun addRunner(firstName: String) {
+        val name = firstName.trim()
+        if (name.isEmpty()) return
+        viewModelScope.launch { resultsRepository.addRunner(name) }
     }
 
     fun removeRunner(runnerId: Int) {
