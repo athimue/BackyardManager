@@ -24,4 +24,9 @@ android {
 dependencies {
     implementation(platform("androidx.compose:compose-bom:2024.02.00"))
     implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.material:material-icons-core")
+
+    // Shared TV components (BackyardButton…)
+    implementation(libs.androidx.tv.material)
 }

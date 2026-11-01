@@ -13,6 +13,13 @@ const val RACE_AUTO_START_GRACE_SECONDS = 300L
 const val LAP_WARNING_SECONDS = 30
 const val RESULTS_MAX_LAPS = 15
 
+/** Official Backyard Ultra loop distance (4.167 miles). */
+const val LOOP_DISTANCE_KM = 6.706
+
+/** "33,5 km" — distance covered for a number of completed loops. */
+fun formatDistanceKm(completedLaps: Int): String =
+    String.format(java.util.Locale.FRANCE, "%.1f km", completedLaps * LOOP_DISTANCE_KM)
+
 const val AUDIO_WARNING_VOLUME = 80
 const val AUDIO_WARNING_TONE_DURATION_MS = 250
 const val AUDIO_WARNING_REPEAT_DELAY_MS = 500L
